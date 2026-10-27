@@ -1,0 +1,56 @@
+/*
+  Tailwind for the shadcn-style components.
+
+  The site has its own stylesheet and design tokens (styles/tokens.css, styles/app.css). Tailwind is
+  here for the component set under components/ui, not to replace them, so:
+
+  - preflight is not imported: it would reset margins, headings and form controls the existing
+    layout depends on;
+  - utilities are imported unlayered. Layered utilities lose to unlayered author CSS, so a bare
+    "button { font: inherit }" in app.css would quietly beat the text-size utility on a new button;
+  - the shadcn variable names are mapped onto the site's tokens, so a component written against
+    --primary / --border / --muted paints itself in this site's colours, in both themes.
+*/
+
+/* the site switches themes with [data-theme] and the media query; point Tailwind's dark: at it */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+
+:root {
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --muted: var(--sunken);
+  --muted-foreground: var(--text-2);
+  --border: var(--line);
+  --border-strong: var(--line-control);
+  --input: var(--line);
+  --primary: var(--accent);
+  --primary-foreground: var(--on-accent);
+  --secondary: var(--sunken);
+  --secondary-foreground: var(--text);
+  --destructive: var(--danger);
+  --destructive-foreground: oklch(0.99 0 0);
+  --ring: var(--focus);
+  --radius: 10px;
+
+  /* the component reads these first, and they win over the shadcn names above */
+  --primitive-radius-control: 10px;
+  --primitive-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --primitive-ring: var(--focus);
+  --primitive-control-solid: var(--accent);
+  --primitive-control-solid-foreground: var(--on-accent);
+  --primitive-control-solid-hover: var(--accent-hover);
+  --primitive-control-solid-active: var(--accent-hover);
+  --primitive-surface-elevated: var(--surface);
+  --primitive-surface-hover: var(--hover);
+  --primitive-surface-active: var(--selected);
+  --primitive-destructive: var(--danger);
+  --primitive-destructive-foreground: oklch(0.99 0 0);
+  --primitive-control-height-sm: 32px;
+  --primitive-control-height-md: 36px;
+  --primitive-control-height-lg: 40px;
+}

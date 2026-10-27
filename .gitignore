@@ -1,0 +1,24 @@
+data/cache/
+__pycache__/
+*.pyc
+site/preview*.html
+build/
+
+# generated: a build writes these; roadmap.json alone is several megabytes and is rebuilt on every run
+site/index.html
+site/assets/
+site/feed.json
+site/roadmap.json
+site/classic.html
+site/ROADMAP.md
+site/llms.txt
+site/AGENTS.md
+
+# secrets
+.env
+.env.*
+
+# working caches: rebuilt from the map when absent
+data/*_cache.json
+data/curation.json
+tests/fixtures/stats-history.json

@@ -1,0 +1,222 @@
+# Contributing
+
+Thanks for helping. The map is only as good as its data, and its data comes from people who read the
+AnyPS5 issues closely. There are three ways to help, smallest first:
+
+1. **Data corrections** in `data/blockers.json`: a wrong stage, a missing blocker, a fix that landed; and in
+   `data/games.json`: two title IDs that are one game, or two that are not (see "Possible duplicates to check"
+   on the About page).
+2. **Mining rules** in `anyps5_roadmap/`: teach the miner to read a kind of sentence it gets wrong.
+3. **Rendering** in `web/`, the app people see, and `render_html.py`, the same map as one static page.
+
+Not sure where something belongs? [Open an issue](https://github.com/authurtabo-byte/anyps5-roadmap/issues/new/choose)
+with one of the forms. Look for issues
+labelled [good first issue](https://github.com/authurtabo-byte/anyps5-roadmap/labels/good%20first%20issue).
+
+Corrections can also come from the live map: every game and every blocker has a "Report a
+correction" button that files the same information without an account.
+
+## Your first data fix in 5 minutes
+
+A real example: the page listed LEGO Horizon Adventures (PPSA14632) with "Claimed Ingame,
+unverified · PR #2791". This is how such a claim gets settled.
+
+1. **Open the source.** Click the claim's link. PR #2791 says: "PPSA14632 (LEGO Horizon Adventures),
+   on my test branch (`main` db343a93 plus #1157, #425, #2699, #423/#1077 and local stand-ins needed to
+   reach gameplay)". `gh pr view 1157 -R boykopovar/AnyPS5` and so on show those PRs are still open.
+   Gameplay on a branch of open PRs and local stand-ins does not count, so the verdict is `suppressed`.
+2. **Add a stage review** to `stage_reviews` in `data/blockers.json`:
+
+   ```json
+   {
+     "title": "PPSA14632",
+     "claim": "Ingame",
+     "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2791",
+     "verdict": "suppressed",
+     "quote": "PPSA14632 (LEGO Horizon Adventures), on my test branch (`main` db343a93 plus #1157, #425, #2699, #423/#1077 and local stand-ins needed to reach gameplay), steady state per 10 s:",
+     "reason": "Gameplay was reached only on a test branch with five open PRs and local stand-ins."
+   }
+   ```
+
+   `confirmed` and `downgraded` verdicts also need the `stage` that holds on `main`, with its own `url`.
+3. **Check it:** `python3 roadmap.py --validate` names every rule a change breaks, with its place in
+   the file. Then `python3 -m unittest discover -s tests`.
+4. **Open a pull request.** CI runs the checks and posts a **Blocker map preview** in the job summary:
+   the base branch and your branch, built from the same API snapshot, side by side. For this fix it
+   showed one more stage review and PPSA14632's claim going from Ingame to Menus: the Ingame claim from
+   PR #2791 is gone, and the next one, from a comment on AnyPS5 issue #476, waits for its own review.
+   The built site is attached to the run as the `site-preview` artifact if you want to click through
+   it; unzip it and serve the folder (`python3 -m http.server -d site-preview`), since the app reads
+   `roadmap.json` over HTTP, or open `classic.html` directly. A labeler adds `data-correction`.
+5. **Merge.** Every push to `main` that touches `data/` rebuilds and deploys the page, so the fix is
+   live a few minutes later.
+
+The same steps work for blockers (`blockers[]`), the order in which they stop a game (`titles[]` →
+`blockers`) and issues that are not blockers (`not_blockers[]`). [AGENTS.md](AGENTS.md) describes every
+field.
+
+## Evidence rules
+
+These hold for every data change, and reviewers check them:
+
+- **A public link for everything.** An issue, a comment or a PR. A stage without a public source is not
+  added, however sure you are.
+- **Never invent an ID.** No title ID, game name, issue number or stage from memory. Check numbers with
+  `gh issue view N -R boykopovar/AnyPS5` (works for PRs too) and copy the exact state.
+- **Only `main` counts.** A stage counts when it was reached on `main`, or on `main` plus PRs that are
+  merged now. Hopes and plans, other emulators, negations ("crashes before the main menu"), loading
+  steps ("loads story mode until …"), quotes about another title, and anything reached only on a branch
+  with open PRs, local stand-ins, integration stacks or hacks do not count.
+- **Quote, don't paraphrase.** A stage review carries the exact sentence it rests on.
+- **Short and factual.** `why`, `note` and `reason` are one line, without adjectives or guesses about
+  causes. No console dumps, keys or personal data.
+
+## Mining rules
+
+The reader works through the text one line at a time (`anyps5_roadmap/mine.py`) and the generator
+turns that into titles, blockers and chains (`anyps5_roadmap/model.py`). A rule change can move many games at
+once, so:
+
+- **Every rule comes with a fixture test.** Test the function directly (for example
+  `stage_in("… boots to the title screen …", 0)` in `tests/test_roadmap.py`), and when the rule changes
+  what the generator builds, add the case to `tests/fixtures/raw.json` and assert on the result.
+- **Prefer missing a stage to inventing one.** A rule that reads a stage it should not is worse than
+  one that reads nothing; mined stages of Menus and up stay claims anyway.
+- **Look at the preview.** The CI summary runs your rule over the real snapshot and lists every title
+  whose stage, claim or chain changed. Read the list before asking for review.
+
+Locally, after one live build: `python3 roadmap.py --offline --out build/before` on `main`, the same
+with `--out build/after` on your branch, then
+`python3 -m anyps5_roadmap.preview build/before build/after`.
+
+## Rendering
+
+The front page is a React app in `web/` (TypeScript, Vite). It fetches `roadmap.json` and `feed.json`
+in the browser and shows nothing else, so a data fix never needs a change there. Each blocker and each
+game has a link of its own (`#/blockers/2548`, `#/games/PPSA01746`), filters and sorting live in the
+address too, and the classic page's anchors (`#b-2548`, `#g-PPSA01746`) still lead to the same place.
+
+`render_html.py` renders `classic.html`, the whole map as one static page that works without
+JavaScript. The app's `<noscript>` points to it, and a build without Node uses it as `index.html`. To
+rebuild only that page: `python3 render_html.py build/site/roadmap.json build/site/classic.html`.
+
+### Run the app
+
+Node 24 or newer:
+
+```sh
+cd web
+npm ci            # the exact versions in package-lock.json
+npm run dev       # http://localhost:5173 over the committed site/roadmap.json and web/sample/feed.json
+npm test          # Vitest: data mapping, sorting, filters, routes and the list views
+npm run build     # typecheck, then web/dist/
+```
+
+`npm run dev` serves `roadmap.json` and the other data files from `ROADMAP_DATA` (default `../site`),
+then from `web/sample/`. To look at your own build: `ROADMAP_DATA=../build/site npm run dev` after
+`python3 roadmap.py --offline --out build/site`.
+
+| File | What it does |
+|---|---|
+| `web/src/data/lists.ts` | The filters and sort orders of the game list and the blocker list |
+| `web/src/data/feed.ts` | `feed.json` → the Changes view and the dates of recent fixes |
+| `web/src/lib/router.ts` | Hash routes, the drawer over the view it was opened from, the classic page's anchors |
+| `web/src/views/` | One file per view (Home with the game list, Blockers, Changes, About, Coverage) and the two drawers |
+| `web/src/styles/` | Design tokens (`tokens.css`) and layout (`app.css`) |
+| `web/src/test/fixture-roadmap.json` | The fixture build of `tests/fixtures`, which the tests read |
+
+After a change to the shape of `roadmap.json`, regenerate the fixture:
+`python3 roadmap.py --offline --no-network --cache tests/fixtures/raw.json --curated
+tests/fixtures/curated.json --games tests/fixtures/games.json --out build/fixture-site`, then copy `build/fixture-site/roadmap.json` to
+`web/src/test/fixture-roadmap.json`.
+
+### Design
+
+The map has a settled design: oklch neutrals with ink for emphasis, one blue accent that only means
+"you can act here" (focus rings, the one primary button), green only where something is implemented or
+fixed, Geist for text, Geist Mono for IDs, Geist Pixel for the few headline numbers, and one type scale
+(12, 13, 15, 16, 17, 18 and 22 px plus the display size). The front page answers one question first:
+how far does each game get? A short hero with four numbers and the search, then the game list with its
+stage filter and the one blocker that stops each game. The ranking, the changes and the method sit
+one level down (Blockers, Changes, About), and details open in the drawer. Motion is limited to the
+drawer and press feedback, on transform and opacity only. A change should look like it was always
+there.
+
+Before asking for review, check it in light and dark mode, at 1440, 768 and 320 px (nothing may
+scroll sideways), with the keyboard only (Tab, Enter, Escape, the arrow keys in a list, `/` for
+search), and `classic.html` with JavaScript off.
+
+## Setup and checks
+
+```sh
+python3 -m pip install -r requirements-dev.txt   # ruff, for lint and format only
+ruff check . && ruff format --check .
+python3 -m unittest discover -s tests
+python3 roadmap.py --validate
+```
+
+For the web app: `cd web && npm ci && npm run typecheck && npm test && npm run build`.
+
+The generator itself uses the Python standard library only; please keep it that way. The web app has
+two runtime dependencies, `react` and `react-dom`; please keep that list short too, and pin exact
+versions.
+
+CI (`.github/workflows/ci.yml`) runs all of this, the Python part on Python 3.11 and the web app on
+Node 24, for every pull request, forks included, without secrets. A labeler adds `data-correction`,
+`mining` or `rendering` from the files you touch.
+
+## What not to commit
+
+The repository is public, and everything in it is published with the page. Before you push, check
+that your change carries none of these:
+
+- **Keys and endpoints.** No API key, token, password or service id anywhere: not in a script, not
+  in a fixture, not in a comment, not in a commit message. Anything the published run needs to reach
+  GitHub is supplied at run time by whoever runs it and never lives in a tracked file. The
+  `.env.example` files are templates and must stay empty.
+- **Cache and generated data.** `data/cache/` is git-ignored and rebuilt from upstream; so are
+  `build/`, `site/roadmap.json`, `site/feed.json`, `site/index.html`, `site/assets/` and the status
+  files a run writes. A generated file that turns up in `git status` belongs in `.gitignore`,
+  not in the commit.
+- **`node_modules/`, `web/dist/`, `__pycache__/`.** Build output, rebuilt by `npm ci` and by a run.
+- **Console dumps, keys, personal data.** No logs with a user's paths, IPs or account names, and no
+  console dump of a game. Quote the one line that proves a stage, not the whole log.
+- **Deployment state.** No filled-in service files, no host-specific paths, no output of
+  `systemctl status` or a deploy log.
+
+`data/blockers.json`, `data/games.json`, `data/reported_stages.json` and `data/stage_reviews.json`
+are data, not cache: they are tracked on purpose and reviewed like code.
+
+## Module map
+
+| File | What it does |
+|---|---|
+| `roadmap.py` | Entry point; re-exports the package's names for tests and scripts |
+| `anyps5_roadmap/cli.py` | Command line, `--validate`, the checks on `data/blockers.json` (`validate_curated`) and `data/games.json` (`validate_games`) |
+| `anyps5_roadmap/config.py` | Paths, the upstream repository, stage names |
+| `anyps5_roadmap/github.py` | `gh api` calls with retries |
+| `anyps5_roadmap/collect.py` | GraphQL queries for issues, PRs, discussions and their threads; the listing cursor, the budget reserve, the raw cache |
+| `anyps5_roadmap/mine.py` | Text rules: names (`name_before`, `name_after`), stages (`stage_in`), error lines (`signature_from`), references (`refs_in`, `closing_refs`) |
+| `anyps5_roadmap/model.py` | `Model`: links, titles, blockers, chains, each game's chain, the ranking by game |
+| `anyps5_roadmap/identity.py` | Which title IDs are one game: the name key (`name_key`), the PlayStation title list (`parse_catalog`), merges and the review list (`resolve`) |
+| `anyps5_roadmap/evaluate.py` | Qualifying reports, `best_stage`, `unverified_claim`, `confidence`, the stage history (`timeline`), evidence `dedupe` |
+| `anyps5_roadmap/images.py` | Cover URLs from the PlayStation Store and Steam, cached in `data/cache/images.json` ([docs/images.md](docs/images.md)) |
+| `anyps5_roadmap/migrate.py` | The report of what the move to game entities changed ([docs/migrations/](docs/migrations/)) |
+| `anyps5_roadmap/coverage.py` | HLE and ISA coverage from progress.json; PM4 packets from the driver sources |
+| `anyps5_roadmap/assemble.py` | `roadmap.json`: game records, identity, stats, focus areas, help wanted, `KNOWN_GAPS` |
+| `anyps5_roadmap/render_md.py` | `ROADMAP.md` and `llms.txt` |
+| `anyps5_roadmap/preview.py` | The PR preview summary; `rank_moves` compares two rankings |
+| `anyps5_roadmap/feed.py` | `feed.json`: what changed since the live `roadmap.json`, as a JSON Feed |
+| `render_html.py` | `classic.html` (and `index.html` in a build without Node) |
+| `web/` | The front page: a React app over `roadmap.json` and `feed.json` (see [Rendering](#rendering)) |
+| `tests/` | Fixture tests; `tests/fixtures/raw.json` is a tiny upstream, `curated.json` a tiny curated file, `PS5_Titles.tsv` a slice of the PlayStation title list and `images.json` a cover cache |
+
+## Pull requests
+
+- One topic per pull request, based on current `main`.
+- Fill in the checklist in the template. Every line of a change is its author's responsibility.
+  uses: you are responsible for every line
+  either way.
+- Merges are squash merges; the branch is deleted afterwards.
+
+Everyone taking part follows the [code of conduct](CODE_OF_CONDUCT.md).

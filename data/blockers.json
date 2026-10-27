@@ -1,0 +1,1484 @@
+{
+  "schema_version": 1,
+  "about": "Curated facts that text mining misses. Every entry is marked origin=curated in the output. Verify numbers with `gh issue view N -R boykopovar/AnyPS5` before adding. See AGENTS.md.",
+  "verified": "2026-10-10",
+  "blockers": [
+    {
+      "id": "2548",
+      "issue": 2548,
+      "title": "Packed pixel ancillary word read whole after its VGPR is reused",
+      "signature": "ShaderRecompiler::Recompile: shader info collection failed: packed pixel ancillary input has an unsupported live use",
+      "area": "shader",
+      "fix_prs": [
+        {"repo": "AlxcBTW/AnyPS5", "number": 25, "note": "partial: proves helper-only reads unused; LEGO Horizon still hits the visit limit and Kena has loop (back-edge phi) cases"}
+      ],
+      "next": "Carry a sound fix upstream. The rest needs the RDNA 2 ancillary bit layout (Eye_id and undocumented bits) or a loop-aware proof.",
+      "help_wanted": "Test AlxcBTW/AnyPS5#25 on Stray, LEGO Horizon, Kena and Lies of P and report which shaders still fail.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2548#issuecomment-6099758845"]
+    },
+    {
+      "id": "2102",
+      "issue": 2102,
+      "title": "Layered rendering: color views of several array slices",
+      "signature": "AGC graphics: color views of several array slices are unsupported",
+      "area": "agc",
+      "fix_prs": [],
+      "next": "Render layered draws into all slices of a 3D or array color target.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2102#issuecomment-6099873138"]
+    },
+    {
+      "id": "1409",
+      "issue": 1409,
+      "title": "Storage image access to a depth/stencil surface",
+      "signature": "AGC graphics: storage image access to depth/stencil surface 0x… is not implemented",
+      "area": "agc",
+      "fix_prs": [
+        {"number": 454, "note": "retire a depth surface once another writer covers its memory"},
+        {"number": 2519, "note": "closed by the intake rule"}
+      ],
+      "related_prs": [{"number": 1495, "note": "merged: same idea for sampled views"}],
+      "next": "Treat a storage view of a different size than the depth surface as ordinary storage memory.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/1409#issuecomment-6099871848"]
+    },
+    {
+      "id": "pr-2054",
+      "issue": null,
+      "title": "Windows: direct memory mapped one 16 KiB view at a time",
+      "signature": null,
+      "area": "libkernel",
+      "fix_prs": [{"number": 2054, "note": "maps direct memory as write-watched private pages; 2.4 GB in about 2.3 s instead of minutes"}],
+      "next": "Review and merge #2054. Without it one sceKernelMapDirectMemory of 64-155 MiB takes 10-120 s and Unreal's RenderThread watchdog fires.",
+      "notes": "Stall, no error line. WindowsMappings::Map makes one MapViewOfFile3 per 16 KiB page.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/2054"]
+    },
+    {
+      "id": "pr-4536",
+      "issue": null,
+      "title": "libkernel: sceKernelDebugOutText blocks on a guest stderr moved by dup2, and every host stderr write waits",
+      "signature": null,
+      "area": "libkernel",
+      "fix_prs": [{"number": 4536}],
+      "next": "Review and merge #4536, which carries the second commit of the closed #1870.",
+      "notes": "Stall, no error line. The last line is Vulkan device ready and no swapchain is created. main never had the second commit of #1870; #2478 added dup2 without it.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/4536", "https://github.com/boykopovar/AnyPS5/pull/1870"]
+    },
+    {
+      "id": "pr-425",
+      "issue": null,
+      "title": "Depth surface sampled as a cube texture",
+      "signature": null,
+      "area": "agc",
+      "fix_prs": [{"number": 425}],
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/425"]
+    },
+    {
+      "id": "2783",
+      "issue": 2783,
+      "title": "NVIDIA: wave64 NGG culling program reads lane 63",
+      "signature": null,
+      "area": "shader",
+      "fix_prs": [],
+      "next": "Maintainer decision: report 32-wide waves in s3 on hosts with 32-lane subgroups.",
+      "help_wanted": "Design decision needed from maintainers; there is no sound per-shader fix.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2783"]
+    },
+    {
+      "id": "2642",
+      "issue": 2642,
+      "title": "Structurizer: shared merge splitting never terminates in a two-latch loop",
+      "signature": null,
+      "area": "shader",
+      "fix_prs": [
+        {"repo": "AlxcBTW/AnyPS5", "number": 20, "note": "merge a loop selection where its arms meet in the iteration"},
+        {"repo": "AlxcBTW/AnyPS5", "number": 24, "note": "loop exits that leave before they meet; depends on #20"}
+      ],
+      "next": "Carry #20 and #24 upstream. 007 First Light's shader has the other shape (see pr-2471).",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2642#issuecomment-6097500996"]
+    },
+    {
+      "id": "pr-2471",
+      "issue": null,
+      "title": "Structurizer: selections joined at a shared loop exit",
+      "signature": null,
+      "area": "shader",
+      "fix_prs": [{"number": 2471}],
+      "next": "Review and merge #2471; 007 First Light's stop-9 shader (125 blocks) has this shape.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2642#issuecomment-6097500996"]
+    },
+    {
+      "id": "pr-2106",
+      "issue": null,
+      "title": "pthread_sigmask is not exported (libkernel)",
+      "signature": "FAIL: unresolved ELF import JZKw5+Wrnaw (pthread_sigmask) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 2106, "note": "closed without merge"}],
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/2106", "https://github.com/boykopovar/AnyPS5/issues/1578", "https://github.com/boykopovar/AnyPS5/pull/2897"]
+    },
+    {
+      "id": "2761",
+      "issue": 2761,
+      "title": "Windows: TLS reads left unpatched after zero alignment padding",
+      "signature": null,
+      "area": "relinker",
+      "fix_prs": [{"number": 2821}],
+      "related_prs": [{"repo": "AlxcBTW/AnyPS5", "number": 22, "note": "same patch, carried as #2821"}],
+      "next": "Review and merge #2821.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2761#issuecomment-6098155605"]
+    },
+    {
+      "id": "1413",
+      "issue": 1413,
+      "title": "v_interp_mov P10/P20 of a flat input without pass-through",
+      "signature": null,
+      "area": "shader",
+      "fix_prs": [
+        {"repo": "AlxcBTW/AnyPS5", "number": 12, "note": "reads P10 of a flat input as the provoking vertex"},
+        {"number": 4030, "note": "merged 2026-10-12 (acb13d1b): reads P10 of a flat input as the provoking vertex; the hardware answer for P10/P20 is still open here"}
+      ],
+      "next": "Settle what PS5 hardware returns for P10/P20 here (CouchRiv measured 0 on gfx1036). #4030 covers the provoking-vertex case: nine titles no longer stop at it on main 2a5eca11; P10 under the first provoking vertex stays a throw that the shader prebuild catches.",
+      "help_wanted": "Hardware answer needed (tools/hw-oracle on a PS5-class GPU).",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6095663977", "https://github.com/boykopovar/AnyPS5/issues/3581", "https://github.com/boykopovar/AnyPS5/pull/4030#issuecomment-6123261683"]
+    },
+    {
+      "id": "2631",
+      "issue": 2631,
+      "title": "v_fma_mix* in FLOAT_MODE 0xcc (f16 round toward zero)",
+      "signature": null,
+      "area": "shader",
+      "fix_prs": [
+        {"repo": "AlxcBTW/AnyPS5", "number": 19, "note": "matches hardware in all four f16 rounding modes"},
+        {"number": 3512}
+      ],
+      "next": "Land #3512, which carries AlxcBTW/AnyPS5#19.",
+      "sources": [
+        "https://github.com/boykopovar/AnyPS5/issues/2631#issuecomment-6099900950",
+        "https://github.com/boykopovar/AnyPS5/pull/3512#issuecomment-6109421521",
+        "https://github.com/boykopovar/AnyPS5/issues/1578#issuecomment-6108595247"
+      ]
+    },
+    {
+      "id": "3369",
+      "issue": 3369,
+      "title": "Windows: a library an unmatched import is searched in is not loaded (since #3129)",
+      "signature": "FAIL: unresolved ELF import VANhIWcqYak",
+      "area": "relinker",
+      "fix_prs": [{"number": 3365}],
+      "status": "resolved",
+      "next": "Hotline Miami (#3367) has the same shape; a run on main would confirm it.",
+      "sources": [
+        "https://github.com/boykopovar/AnyPS5/issues/3369#issuecomment-6109192382",
+        "https://github.com/boykopovar/AnyPS5/pull/3365"
+      ]
+    },
+    {
+      "id": "3501",
+      "issue": 3501,
+      "title": "libc: reallocf is absent",
+      "signature": "FAIL: unresolved ELF import YMZO9ChZb0E from libSceLibcInternal.prx",
+      "area": "libc",
+      "fix_prs": [{"number": 3522}],
+      "next": "Land #3522.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/3522#issuecomment-6109415852"]
+    },
+    {
+      "id": "3165",
+      "issue": 3165,
+      "title": "libkernel: pthread_attr_getinheritsched, pthread_attr_getscope and pthread_attr_setscope are absent",
+      "signature": "FAIL: unresolved ELF import e2G+cdEkOmU from libkernel.prx",
+      "area": "libkernel",
+      "fix_prs": [{"number": 3377}, {"number": 3494}],
+      "next": "Land #3494, which carries the closed #3377.",
+      "sources": [
+        "https://github.com/boykopovar/AnyPS5/issues/3165#issuecomment-6108633200",
+        "https://github.com/boykopovar/AnyPS5/pull/3494",
+        "https://github.com/boykopovar/AnyPS5/pull/3522#issuecomment-6109415852"
+      ]
+    },
+    {
+      "id": "2136",
+      "issue": 2136,
+      "title": "Relinker: raw syscall instructions of the ps5-payload-dev SDK libc stubs are refused",
+      "signature": "FAIL: Forbidden syscall instruction at code offset 0x0",
+      "area": "relinker",
+      "related_prs": [{"number": 2206}],
+      "next": "Maintainer decision on the open question: opt-in trap, trap by default, or host implementations for the stubs. With the stubs trapped, eight of the nine titles relink and stop on ordinary import stops.",
+      "sources": [
+        "https://github.com/boykopovar/AnyPS5/issues/2136",
+        "https://github.com/boykopovar/AnyPS5/issues/2136#issuecomment-6104954017",
+        "https://github.com/boykopovar/AnyPS5/issues/2136#issuecomment-6095592760",
+        "https://github.com/boykopovar/AnyPS5/pull/2206"
+      ]
+    },
+    {
+      "id": "siglongjmp",
+      "issue": null,
+      "title": "siglongjmp is not exported (libkernel)",
+      "signature": "FAIL: unresolved ELF import pebqbE5ws8s (siglongjmp) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 2935}],
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/1578", "https://github.com/boykopovar/AnyPS5/pull/2935"]
+    },
+    {
+      "id": "pr-1482",
+      "issue": null,
+      "title": "_umtx_op wait and wake are not implemented",
+      "signature": "FAIL: unresolved ELF import 04AjkP0jO9U (_umtx_op) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 1482}],
+      "next": "Review and merge #1482.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/1482"]
+    },
+    {
+      "id": "pr-1872",
+      "issue": null,
+      "title": "pthread_set_name_np is not exported (libkernel)",
+      "signature": "FAIL: unresolved ELF import oxMp8uPqa+U (pthread_set_name_np) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 1872, "note": "closed without merge"}],
+      "next": "Review #3031, which resubmits #1872.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/1872", "https://github.com/boykopovar/AnyPS5/issues/1578", "https://github.com/boykopovar/AnyPS5/pull/3031"]
+    },
+    {
+      "id": "2701",
+      "issue": 2701,
+      "area": "libkernel",
+      "fix_prs": [{"number": 2697}, {"number": 2738}],
+      "next": "Review #2902, which carries #2738.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/2701", "https://github.com/boykopovar/AnyPS5/pull/2738", "https://github.com/boykopovar/AnyPS5/pull/2902"]
+    },
+    {
+      "id": "pr-1922",
+      "issue": null,
+      "title": "pthread_getaffinity_np is not exported (libkernel)",
+      "signature": "FAIL: unresolved ELF import Jb2uGFMr688 (pthread_getaffinity_np) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 1922}],
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/1922", "https://github.com/boykopovar/AnyPS5/pull/3031"]
+    },
+    {
+      "id": "2908",
+      "issue": 2908,
+      "fix_prs": [{"number": 2945}],
+      "status": "resolved",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/2945", "https://github.com/boykopovar/AnyPS5/issues/2908#issuecomment-6107237368"]
+    },
+    {
+      "id": "3249",
+      "issue": 3249,
+      "area": "libc",
+      "related_prs": [{"number": 545}],
+      "next": "Check the struct layout of localeconv at runtime: callers in PPSA99902 read decimal_point at offset 0, #545 puts it at 0x48.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/3249", "https://github.com/boykopovar/AnyPS5/issues/3249#issuecomment-6107237599", "https://github.com/boykopovar/AnyPS5/issues/3249#issuecomment-6115108315", "https://github.com/boykopovar/AnyPS5/pull/545"]
+    },
+    {
+      "id": "3521",
+      "issue": 3521,
+      "title": "libkernel: poll throws for descriptors that are not sockets",
+      "signature": "poll: descriptor 3 is not a socket",
+      "area": "libkernel",
+      "fix_prs": [{"number": 3649}],
+      "next": "Land #3649, which carries screamm's poll branch.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/3521", "https://github.com/boykopovar/AnyPS5/pull/3649"]
+    },
+    {
+      "id": "3734",
+      "issue": 3734,
+      "title": "libScePosixForWebKit: getservbyname is absent",
+      "signature": "FAIL: unresolved ELF import H1bArJPagV0 from libScePosixForWebKit.prx",
+      "area": "prx",
+      "fix_prs": [{"number": 3798}],
+      "next": "Land #3798.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/3734", "https://github.com/boykopovar/AnyPS5/pull/3798#issuecomment-6115637954", "https://github.com/boykopovar/AnyPS5/issues/1578#issuecomment-6120048127"]
+    },
+    {
+      "id": "pr-3700",
+      "issue": null,
+      "title": "sysctl: MIB 1.37 (kern.arandom) is unsupported",
+      "signature": "sysctl_nid_postfix: unsupported MIB 1.37",
+      "area": "libkernel",
+      "fix_prs": [{"number": 3700}],
+      "next": "Land #3700.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/pull/3700", "https://github.com/boykopovar/AnyPS5/pull/3798#issuecomment-6115637954"]
+    },
+    {
+      "id": "pr-1841",
+      "issue": null,
+      "title": "getcontext, setcontext and makecontext are not exported",
+      "signature": "FAIL: unresolved ELF import 2VRU7xiqLO8 (setcontext) from libkernel",
+      "area": "libkernel",
+      "fix_prs": [{"number": 1841, "note": "closed without merge"}],
+      "next": "Reopen or resubmit #1841 and settle its ucontext size (0x500 bytes in the PR, 0x370 in FreeBSD's headers).",
+      "sources": [
+        "https://github.com/boykopovar/AnyPS5/pull/1841",
+        "https://github.com/boykopovar/AnyPS5/pull/1841#issuecomment-6106311200",
+        "https://github.com/boykopovar/AnyPS5/pull/1841#issuecomment-6107169569",
+        "https://github.com/boykopovar/AnyPS5/pull/1841#issuecomment-6107351873"
+      ]
+    },
+    {
+      "id": "4399",
+      "issue": 4399,
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/4399#issuecomment-6162621642"]
+    },
+    {
+      "id": "6301",
+      "issue": 6301,
+      "next": "Review and merge #6308; with it Minecraft Dungeons II also loads its first world.",
+      "sources": ["https://github.com/boykopovar/AnyPS5/issues/6301", "https://github.com/boykopovar/AnyPS5/pull/6308#issuecomment-6202950743"]
+    }
+  ],
+  "not_blockers": [
+    {"issue": 2749, "reason": "Title report for Stray (PPSA02100); its stop is #2548."},
+    {"issue": 3251, "reason": "Names vkQuake (PPSA99010), whose catalog build does not import shm_unlink; its stop is pr-1482."},
+    {"issue": 4664, "reason": "Title report for ccleste (PPSA59322), the same stall that #4536 fixed (merged 2026-10-12 18:31Z, 21c27e60); measured on main 9aa5fd29, before #4536. It stays open upstream; the stop is pr-4536."},
+    {"issue": 6637, "reason": "Title-data prerequisite: 2 Ship 2 Harkinian (PPSA99621) and Ship of Harkinian (PPSA99620) fault in the libultraship GUI texture loader on a texture that only the user-made ROM archive (mm.o2r) holds and the catalog zips omit, before any AGC or VideoOut call; no AnyPS5 stop."}
+  ],
+  "stage_reviews_note": "Hand review of every mined stage of Menus or higher (2026-10-10). claim_url is the source the miner quoted; it is dropped for that title. confirmed/downgraded add a curated stage from url. Only main or main plus PRs that are merged now counts; branches with open PRs, local stand-ins or hacks do not.",
+  "stage_reviews": [
+    {"title": "PPSA59322", "claim": "Presents", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1732#issuecomment-6095296573",
+     "verdict": "downgraded", "stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-12",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/4536",
+     "quote": "On `main`, neither saves a frame in 90 s.",
+     "reason": "The 60 FPS run was TheAggie's local build; main never had the second commit of #1870 that #4536 carries."},
+    {"title": "PPSA01325", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2156",
+     "verdict": "downgraded", "stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-09",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/2156",
+     "quote": "I measured on my local branch, since current `main` stops at boot on `missing static shader ABI register 201` (#1836).",
+     "reason": "The title screen was reached on a local branch only."},
+    {"title": "PPSA01341", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1924",
+     "verdict": "downgraded", "stage": "Starts", "os": "Linux", "gpu": null, "build": "main + #861 (merged)", "date": "2026-10-10",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/2552",
+     "quote": "With the default CMake option `ANYPS5_ENABLE_SPIRV_TOOLS=OFF`, Demon's Souls (PPSA01341 v1.07) segfaults in its own code 13 to 14 s after launch, before any window opens.",
+     "reason": "#1924 says \"not run with this branch\"; the tutorial-level runs came from the author's own builds."},
+    {"title": "PPSA01342", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/1025",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main at the merge of #5", "date": "2026-09-27",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/5",
+     "quote": "Boots Demon's Souls (PPSA01342) from the SIE logo through the Bink intro, the language menu, the title screen, the main menu and the in-engine intro cinematic",
+     "reason": "The #1025 line only quotes #5; #5 is merged and is the primary source."},
+    {"title": "PPSA04263", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/153",
+     "verdict": "downgraded", "stage": "Menus", "os": null, "gpu": null, "build": "main at the merge of #153", "date": "2026-09-30",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/153",
+     "quote": "The title plays the intro movie with sound, renders the legal and calibration screens, the main menu and Settings, and loads story mode until the first shader the recompiler cannot structure",
+     "reason": "\"story mode\" was a load that stops at a shader, not gameplay."},
+    {"title": "PPSA04264", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/494",
+     "verdict": "downgraded", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + #153 (merged)", "date": "2026-09-29",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/167",
+     "quote": "It boots GTA V with its own `sce_module` through the intro, the menus and into the Story Mode load",
+     "reason": "The prologue runs only on integration branches of open PRs (#167 and #426, both closed unmerged)."},
+    {"title": "PPSA05324", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/849",
+     "verdict": "suppressed",
+     "quote": "Both runs used my working branch (this change on top of other driver work).",
+     "reason": "Main menu reached on a working branch with unmerged driver changes; no source for main."},
+    {"title": "PPSA05684", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2915",
+     "verdict": "downgraded", "stage": "Starts", "os": null, "gpu": null, "build": "main", "date": "2026-10-09",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/2219",
+     "quote": "clears depth and stencil with draws that set `DB_RENDER_CONTROL` to 0x3 and stops on `main` with: depth/stencil clear, copy, resummarize or decompress draws (DB_RENDER_CONTROL) is unsupported",
+     "reason": "#2915: \"on its own bring-up branch\"; the main menu and first level need the bring-up branch."},
+    {"title": "PPSA07286", "claim": "Playable", "claim_url": "https://github.com/AlxcBTW/anyps5-roadmap/issues/39",
+     "verdict": "confirmed", "stage": "Playable", "os": "Windows", "gpu": "NVIDIA", "build": "main + #3497", "date": "2026-10-12",
+     "url": "https://github.com/AlxcBTW/anyps5-roadmap/issues/39",
+     "quote": "when further testing the average fps was 45 to 60 after waiting for shaders to load and cached",
+     "reason": "LightStorm72 (Windows 11, RTX 2070 SUPER) reports Playable at 40-60 fps on main plus boykopovar/AnyPS5#3497, merged 2026-10-11 as f6203c150."},
+    {"title": "PPSA12544", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/2539",
+     "verdict": "suppressed",
+     "quote": "Silksong ran on a local branch with #1836, #1968, #1969, #846 and #1599 (and #1495, now merged).",
+     "reason": "#846 is still open; no source for gameplay on main."},
+    {"title": "PPSA12544", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/425#issuecomment-6109959175",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-11",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/425#issuecomment-6109959175",
+     "quote": "on current `main` (a11c8f7f, Windows 11, RX 9070 XT) the title no longer needs it. With plain `main` and no other changes, it gets through the first scene where `sampling the stencil/depth plane of depth surface ... is not implemented` used to stop it, and plays at about 60 fps.",
+     "reason": "Plain main, no extra PRs; Playable once a full or extended run is reported."},
+    {"title": "PPSA12544", "claim": "Playable", "claim_url": "https://github.com/AlxcBTW/anyps5-roadmap/issues/40",
+     "verdict": "confirmed", "stage": "Playable", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-11",
+     "url": "https://github.com/AlxcBTW/anyps5-roadmap/issues/40",
+     "quote": "Stage you saw: Playable. OS and GPU: Windows 11, 9070 XT. Build: main at a11c8f7f.",
+     "reason": "Reported by the tester on plain main with a gameplay clip; not fully tested (the game was not finished)."},
+    {"title": "PPSA14632", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2792",
+     "verdict": "suppressed",
+     "quote": "on my test branch (`main` db343a93 plus #1157, #425, #2699, #423/#1077, #2791 and local stand-ins needed to reach gameplay)",
+     "reason": "Gameplay needs open PRs and local stand-ins."},
+    {"title": "PPSA14632", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2791",
+     "verdict": "suppressed",
+     "quote": "PPSA14632 (LEGO Horizon Adventures), on my test branch (`main` db343a93 plus #1157, #425, #2699, #423/#1077 and local stand-ins needed to reach gameplay), steady state per 10 s:",
+     "reason": "Gameplay was reached only on a test branch with five open PRs (#1157, #425, #2699, #423, #1077) and local stand-ins."},
+    {"title": "PPSA15657", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2481",
+     "verdict": "suppressed",
+     "quote": "Disney Epic Mickey: Rebrushed (PPSA15657, UE4), first level, on its testing stack (#2255) with `APS5_NO_HOST_IMPORT=1`",
+     "reason": "First level reached on a testing stack, not on main."},
+    {"title": "PPSA21402", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1197",
+     "verdict": "confirmed", "stage": "Menus", "os": "Linux", "gpu": "NVIDIA", "build": "main + #1020, #861, #1038, #1100 (all merged by 2026-10-10)", "date": "2026-10-07",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/1197",
+     "quote": "PPSA21402 (Balatro 01.015.000), relinked for Linux on `main` + #1020, #861, #1038 and #1100, which it needs to reach its menu here.",
+     "reason": "All four PRs it needs are merged now."},
+    {"title": "PPSA21564", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/305",
+     "verdict": "downgraded", "stage": "Starts", "os": "Linux", "gpu": "NVIDIA", "build": "main de5e541d", "date": "2026-10-10",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/2871",
+     "quote": "Stop 1 — `main` de5e541d, first draw: an NGG passthrough vertex program with `s_barrier` fails SPIR-V validation",
+     "reason": "#305: gameplay was reached \"on my integration branch\"."},
+    {"title": "PPSA21567", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1584",
+     "verdict": "suppressed",
+     "quote": "No title calls these during the Astro Bot (PPSA21567) runs I have, so nothing was tested in-game.",
+     "reason": "A negation (\"nothing was tested in-game\") was read as a stage. The negation rule now covers \"nothing\"."},
+    {"title": "PPSA22520", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/964",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": null, "build": "main", "date": "2026-10-06",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/964",
+     "quote": "so on `main` the title screen is silent. With this change the music fades in and plays.",
+     "reason": "The title screen renders on main (silent before #964, merged 2026-10-10). The mined name \"Seen\" was a parsing bug."},
+    {"title": "PPSA26344", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1267",
+     "verdict": "downgraded", "stage": "Starts", "os": null, "gpu": null, "build": "main", "date": "2026-10-09",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/1920",
+     "quote": "Measured on the title: with #757 + #1836 + #1940, PPSA26344 no longer aborts at this call",
+     "reason": "\"in-game pipeline creations\" names no screen or stage; main aborts at the shader in #1920, and getting past it needs open #757 and #1940."},
+    {"title": "PPSA28997", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1479",
+     "verdict": "suppressed",
+     "quote": "PPSA28997 title screen and gameplay render correctly",
+     "reason": "Measured with #1479, which was closed unmerged. #1930 reports current main (+ #1482 + a local workaround) aborting at start-up on Linux; the main-menu reports in #692/#918 used \"a tree that carries this change\"."},
+    {"title": "PPSA29141", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2055",
+     "verdict": "suppressed",
+     "quote": "Windows 11, i7-13650HX, RTX 4070 Laptop: boot to gameplay with the fix PRs below applied, multi-minute runs without a crash.",
+     "reason": "Needs fix PRs that are not merged; #2055 itself is an open docs PR. The mined name \"Adds LEGO Party!\" was a parsing bug."},
+    {"title": "PPSA36082", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2169",
+     "verdict": "suppressed",
+     "quote": "Tested this with Hades II (PPSA36082) on Linux / RTX 4090. … it renders correctly in gameplay with no refusals in the log. (Stack: #419 plus my #2121 and #2132.)",
+     "reason": "Gameplay on a stack of open PRs."},
+    {"title": "PPSA03748", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1985#issuecomment-6074542370",
+     "verdict": "suppressed",
+     "quote": "The KytyPS5 logs I cited show both NIDs imported but never called: Kerbal Space Program (PPSA03748, KytyPS5#895) reaches gameplay with `BsE-m8JxIOg` and `EHQEDVXZ0TI` patched to stubs and no `Unresolved import stub called` line for either.",
+     "reason": "Gameplay was reached in another emulator (KytyPS5), not in AnyPS5."},
+    {"title": "PPSA26344", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/757#issuecomment-6080729041",
+     "verdict": "suppressed",
+     "quote": "sharpemu/sharpemu#926 (\"Ghost of Yōtei: rendering up to the gamma screen and difficulty menu\") boots PPSA26344 to gameplay, and its first shader item describes the mechanism this PR implements:",
+     "reason": "Gameplay was reached in another emulator (sharpemu); the same comment says AnyPS5 main stops at GetImageResource dword 0."},
+    {"title": "PPSA05684", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2916",
+     "verdict": "suppressed",
+     "quote": "Title: Uncharted: Legacy of Thieves Collection (PPSA05684), on its own bring-up branch.",
+     "reason": "The run was on the title's own bring-up branch, not on main."},
+    {"title": "PPSA16064", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/2233",
+     "verdict": "suppressed",
+     "quote": "Minecraft Dungeons II (PPSA16064, UE5) title screen, with the other changes that title needs.",
+     "reason": "The title screen needed other changes beyond this PR."},
+    {"title": "PPSA36082", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1202#issuecomment-6081737193",
+     "verdict": "suppressed",
+     "quote": "in Hades II (PPSA36082) gameplay on Linux / RTX 4090, ShaderMemory::Regions + TakeRecentRegions were about 18% of the draw thread (bit-by-bit run scan, every stage of every draw).",
+     "reason": "Gameplay tied to an unmerged DRAFT perf change; no main-only run shown."},
+    {"title": "PPSA22520", "claim": "Playable", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/966",
+     "verdict": "confirmed", "stage": "Playable", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-10",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/966",
+     "quote": "In game and playable at 60 FPS.",
+     "reason": "Reported on Windows 11, RTX 4070 SUPER, main at 2ba993a87; all eleven pull requests the report lists are merged."},
+    {"title": "PPSA17221", "claim": "Playable", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5744",
+     "verdict": "confirmed", "stage": "Playable", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5744",
+     "quote": "it boots through the loading screens to the main menu (~60 fps), opens a playable world, renders, saves on quit and exits cleanly.",
+     "reason": "Reported on Windows 11, RTX 3050 Laptop GPU, main at 31bfc4e86; import audit reports 0 absent imports."},
+    {"title": "PPSA21297", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5809",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5809",
+     "quote": "In game (Gatehouse Residence, a study, Gatehouse Hallway): rooms render with lighting, the character walks between rooms and the \"Open\" prompt appears.",
+     "reason": "Reported on CachyOS, RX 9070 XT, main at 23be5a02b with no pull requests or environment variables; the title crashes after 2-4 minutes."},
+    {"title": "PPSA03912", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5146",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5146",
+     "quote": "Main menu, Offline > New Character, class selection and the Rogue Encampment with the world, HUD and sound.",
+     "reason": "Reported on Ubuntu 26.10, RTX 3080 Ti, main at 19e020a27 with no pull requests and APS5_HOST_IMPORT_MIB=16384; two runs of about 40 presents per 10 s."},
+    {"title": "PPSA01802", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/5428",
+     "verdict": "downgraded", "stage": "Presents", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-15",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/5778#issuecomment-6201950433",
+     "quote": "It shows the Ember Lab logos, then the loading screen, then renders the 3D forest scene and keeps presenting it until the time limit (exit by `timeout`, no throw, no crash, no GPU reset).",
+     "reason": "The #5428 runs were on a local stack of unmerged changes; plain main ce991f1ec reaches the forest scene with no UI seen and no input given."},
+    {"title": "PPSA01802", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/425#issuecomment-6131429668",
+     "verdict": "suppressed",
+     "quote": "The fix is in #4722 on top of this head, with a `PaddedCubeCase` test.",
+     "reason": "Gameplay needed #4722 (closed unmerged) on top of #425."},
+    {"title": "PPSA01802", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/4841#issuecomment-6170173016",
+     "verdict": "suppressed",
+     "quote": "Kena does not reach its title on plain `main` (it stops at `buffer descriptor uses an unsupported type`, which #5049 covers), so the runs are on a local stack: `main` f74ec639c + #5049 + #5156 + #4722 + #1201 (with `APS5_PIPELINED_DRAWS=1`) + local stand-ins, `APS5_SYNC_FLIP=1`.",
+     "reason": "The title-screen runs also needed #4722 (closed unmerged) and local stand-ins."},
+    {"title": "PPSA99007", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6167675060",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6167675060",
+     "quote": "The main menu runs at 120 FPS. Controller pulses through `APS5_PAD_INPUT_FILE` open Game and pick the first entry, and the run ends 48 s in (exit 0xC0000409) with:",
+     "reason": "Plain main 31bfc4e86, Windows 11, RTX 4080, relinked with --trap-sdk-syscall-stubs; the menu takes pad input, and the first Game entry stops at #1413."},
+    {"title": "PPSA16064", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/5788",
+     "verdict": "suppressed",
+     "quote": "Both sides are our test build (`main` plus open PRs MCD2 needs, #5480 among them); \"after\" adds this change.",
+     "reason": "Gameplay ran on main plus open PRs, #5480 among them."},
+    {"title": "PPSA16064", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/4517#issuecomment-6143310937",
+     "verdict": "suppressed",
+     "quote": "With #4515 + #4517 (and #4367) on `main` plus the patches MCD2 needs to reach gameplay: p50 131 ms, p99 139-155 ms, steady across 5 runs.",
+     "reason": "Gameplay needed local patches."},
+    {"title": "PPSA16064", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/4943#issuecomment-6143313159",
+     "verdict": "suppressed",
+     "quote": "Tested on Minecraft Dungeons II (PPSA16064) gameplay: Windows 11, RTX 5070, cherry-picked onto our MCD2 build (`main` + the import-join PRs).",
+     "reason": "The MCD2 build is main plus the patches the title needs to reach gameplay (the same author's #4517 comment of that morning)."},
+    {"title": "PPSA16064", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/1201#issuecomment-6143102350",
+     "verdict": "suppressed",
+     "quote": "On Minecraft Dungeons II (PPSA16064) gameplay (Windows 11, RTX 5070), queue 0 spends about 59 ms of a ~101 ms frame on draws:",
+     "reason": "No build is named; the author's gameplay runs that morning were on main plus patches (#4517 comment), and on plain main the title stops at its first world load (#6301)."},
+    {"title": "PPSA15552", "claim": "Playable", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/6594#issuecomment-6263303569",
+     "verdict": "confirmed", "stage": "Playable", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-19",
+     "url": "https://github.com/boykopovar/AnyPS5/pull/6594#issuecomment-6263303569",
+     "quote": "Confirmation on plain `main`: Dead Cells (PPSA15552, v01.005) is playable on `main` 408455bda with no other PRs on top, so without #5898 and #5974.",
+     "reason": "parl0v (Windows 10, RTX 4060, main 408455bda, no PRs): title menu, intro and about 12 minutes of a run at about 60 FPS with no abort; the run-start abort on 46f27623c is fixed by #6594, merged 2026-10-19."},
+    {"title": "PPSA03030", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6979",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6979",
+     "quote": "Title screen, settings, save prompt and dialogue scenes render correctly (screenshots attached).",
+     "reason": "Reported on Windows 11, RTX 4060, main at 29a546d37 with nothing on top; an intermittent storage-image write-back throw stops play."},
+    {"title": "PPSA03490", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7257",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7257",
+     "quote": "The logos play, the \"autosave\" notice, the main menu, a rendered intro movie and a fight in game (around frame 2800 of the fight, as counted by the player) were reached with no emulator crash in a run of about 16 minutes (957 s of log); the player closed it because it was too slow.",
+     "reason": "Reported on Windows 11, RTX 5090, main at 66702f1 unmodified; under 1 to about 18 fps."},
+    {"title": "PPSA03743", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6602",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main + #6441, #6571", "date": "2026-10-15",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6602",
+     "quote": "The player can then walk around in game, and the pause/log menu opens.",
+     "reason": "Reported on Windows 11, RTX 5090, main with #6441 and #6571, both merged since; 9 to 11 fps in game."},
+    {"title": "PPSA04433", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5346",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5346",
+     "quote": "All menus seem to be working (character/company creator, line planning and bus model selection, settings), but there's no audio",
+     "reason": "Reported on Windows, RX 7900 XTX, main at 61b8742b6 with a clean build; no audio."},
+    {"title": "PPSA06147", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7020",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7020",
+     "quote": "The stop: AK::EventManager reads out of bounds, at the prison area after the tutorial boss.",
+     "reason": "Reported on Windows 11, RX 6600, main at ea5c27b53; play reaches the prison area after the tutorial boss, where the Wwise event manager faults in 2 of 2 runs."},
+    {"title": "PPSA06694", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5320",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + #5321, #5322, #5323, #5324", "date": "2026-10-13",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5320",
+     "quote": "With the pull requests below, it starts, shows the legal and logo screens, and reaches the **Create Character** screen about 20 s after start (2 min on the first run, while the shader cache fills).",
+     "reason": "Reported on Windows 11 Pro, RTX 5090, main at e152ba8f with #5321, #5322, #5323 and #5324, all merged since, and APS5_STORE_AT_LABEL=1, which #5324 leaves off by default (without it the Create Character screen shows no character); input works, about 3.5 fps."},
+    {"title": "PPSA06958", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7359",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-18",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7359",
+     "quote": "Logos, title menu, the first rendered cutscene at 12 to 15 fps (faster than on my earlier runs of older builds), then the first playable part at about 11.4 fps.",
+     "reason": "Reported on Windows 11, RTX 5090, main at f1af6c591 with no pull requests, and with APS5_PLAYGO_UNLISTED_CHUNKS=absent."},
+    {"title": "PPSA08270", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6575",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main + #6571", "date": "2026-10-15",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6575",
+     "quote": "Plays past the story intro and the photo scene.",
+     "reason": "Reported on Windows 11, RTX 5090, main with #6571, merged since; plain main aborts at the photo scene on a CB resolve sample-count mismatch."},
+    {"title": "PPSA09804", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6634",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-16",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6634",
+     "quote": "Playable: the intro video (`IntroVideo.mp4`, decoded with FFmpeg) plays, then the menu and gameplay run with a DualSense controller (buttons, sticks, analog triggers, vibration; speaker and vibration ports routed to the controller's audio device).",
+     "reason": "Reported on Ubuntu 24.04, RTX 4090, main at 4eb91eacd."},
+    {"title": "PPSA10112", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7305",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7305",
+     "quote": "It shows the intro brightness screen, the main menu, the New Game flow, a rendered intro movie and then the game itself: the camera moves, the player walks and opens doors.",
+     "reason": "Reported on Windows 11, RTX 5090, main at 66702f1cf with no pull requests; about 8.6 fps in game, and one of two runs stopped about 136 s in. Later comments say main at 2788ed5cf and f1af6c591 stops at the title menu on a warm shader cache unless APS5_STORE_AT_FLIP=1."},
+    {"title": "PPSA21112", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6496",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-15",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6496",
+     "quote": "Gameplay at 59.94 fps after the menus, with an Xbox controller.",
+     "reason": "Reported on Windows 11, RTX 5090, main at fa9365ca7 with nothing on top."},
+    {"title": "PPSA22999", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6547",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-15",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6547",
+     "quote": "In game at 60 fps, sound correct.",
+     "reason": "Reported on Windows 11, RTX 5090, main at 44df21632 with nothing on top."},
+    {"title": "PPSA29043", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7379",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-18",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7379",
+     "quote": "It shows the intro at about 60 fps, then the main menu, a cutscene and the first playable part, where the player walks around.",
+     "reason": "Reported on Windows 11, RTX 5090, main at f1af6c5 with no pull requests; 3 to 9 fps while walking."},
+    {"title": "PPSA31909", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7219",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main + #6343, #6487, #6571", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7219",
+     "quote": "I played it past the menus and it runs at a steady 54 to 60 presents per second (536 to 600 presents in each 10 s window of the profile, 0 dropped).",
+     "reason": "Reported on Windows 11, RTX 5090, main at 66702f1cff built with #6343, #6487 and #6571, all merged since; not run without them."},
+    {"title": "PPSA34547", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7302",
+     "verdict": "confirmed", "stage": "Menus", "os": "Linux", "gpu": "AMD", "build": "main + #7300", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7302",
+     "quote": "The photosensitivity warning, the Remedy end-user license agreement and privacy policy (they scroll with the right stick and accept with Cross), the display calibration screen with its three rendered reference scenes, and First Time Setup, at about 28 FPS.",
+     "reason": "Reported on Arch Linux, RX 9070 XT (RADV), main at 6005185ee with #7300, merged since as 582de4cc1."},
+    {"title": "PPSA34971", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5593",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main + #5588", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5593",
+     "quote": "The title boots, gets through the logos and the menu, and plays; the window presents a 1920x1080 guest surface, and the shader disk cache warms across runs (114 hits, 30 misses, 30 writes over two runs).",
+     "reason": "Reported on Windows 11 Pro, RTX 3070, main at 30f961266; the dump was unwrapped with the SELF unwrap tool #5588, open at the time and merged since (8ffbb4926), and everything else was stock main; 60 FPS in game and a save slot written."},
+    {"title": "PPSA35399", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5832",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5832",
+     "quote": "Main menu, then a new game, then gameplay: a dialogue scene (Trevor and Rose on a boat in front of a burning city, with the dialogue box).",
+     "reason": "Reported on Ubuntu 26.10, RTX 3080 Ti, main at 8f9240f06 with no local changes or pull requests; about 3.8 FPS."},
+    {"title": "PPSA36591", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/7384",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-18",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/7384",
+     "quote": "It shows the menus and then plays normally.",
+     "reason": "Reported on Windows 11, RTX 5090, main at f1af6c5 with no pull requests; about 3 minutes at 60 fps."},
+    {"title": "PPSA92280", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5745#discussioncomment-18979731",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "Intel", "build": "main", "date": "2026-10-16",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5745#discussioncomment-18979731",
+     "quote": "Menu and snake gameplay at 60 FPS (16.7 ms)",
+     "reason": "Reported on Linux, Intel HD Graphics 520 (Mesa ANV), main at 5adefa6f8 with input from APS5_PAD_INPUT_FILE."},
+    {"title": "PPSA99868", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5972",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5972",
+     "quote": "Its menu. The second row creates the VM (`JNI_CreateJavaVM returned 0`).",
+     "reason": "Reported on Windows 11 Pro, RTX 4060, main at e34c47921; menu rows driven with APS5_PAD_INPUT_FILE."},
+    {"title": "PPSA99871", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6664",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + #5918", "date": "2026-10-16",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/6664",
+     "quote": "Its menu with six rows. The first two initialize the runtime and create the VM (`JNI_CreateJavaVM returned 0`).",
+     "reason": "Reported on Windows 11 Pro, RTX 3060, main at 44df21632 with #5918, merged since; rows run with Enter and the arrow keys."},
+    {"title": "PPSA47402", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5931#issuecomment-6249903253",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "Intel", "build": "main", "date": "2026-10-16",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5745#discussioncomment-18979731",
+     "quote": "Title screen ~22 FPS (p50 45.6 ms). Level 1-1 ~19 FPS (p50 ~51.7 ms, 3 runs).",
+     "reason": "Reported on Linux, Intel HD Graphics 520, main at 5adefa6f8 with pad input: the title screen, then gameplay in level 1-1 at about 19 FPS over 3 runs."},
+    {"title": "PPSA10261", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5983",
+     "verdict": "downgraded", "stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/5983",
+     "quote": "It shows the NEOWIZ logo, creates its save (`Account1`), and reaches the in-game loading screen (\"Now Lying ...\", with a tip card).",
+     "reason": "A loading screen is Presents; no menu is reported (Windows 11, RTX 5070, main at a453108cf)."},
+    {"title": "PPSA13579", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/4687",
+     "verdict": "confirmed", "stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main + #7298", "date": "2026-10-17",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/4687#discussioncomment-19006894",
+     "quote": "Run 1, cold shader cache, frame dumps on: title \"Press X to continue\" by 15 s, cross to the main menu (`Pilgrimage`/`Options`/`Credits`), cross to `SELECT PILGRIMAGE`, cross on `1 New Game`, black load then the intro cutscene from about 160 s, gameplay (HUD, health bar, sarcophagus with a triangle prompt) at about 385 s.",
+     "reason": "Reported on Linux (CachyOS), RTX 3080 Ti, main at e3838332e with no pull requests; its libSceVideoOut.prx was built from #7298 at 019a48e8, merged since, which adds present and pad telemetry and changes nothing else (the later amend adds a documentation sentence); triangle opened the Bile Flasks tutorial."},
+    {"title": "PPSA28319", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/4762",
+     "verdict": "downgraded", "stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-12",
+     "url": "https://github.com/boykopovar/AnyPS5/issues/4762",
+     "quote": "Middle Ages Ping Pong (PPSA28319, Unity, MIT, from the homebrew catalog) renders its main menu at 60 FPS on an NVIDIA GPU.",
+     "reason": "The menu is reported rendered, not responding to input (main at 1acfa7f78)."},
+    {"title": "PPSA21444", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5921",
+     "verdict": "downgraded", "stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main + #5916", "date": "2026-10-14",
+     "url": "https://github.com/boykopovar/AnyPS5/discussions/5921",
+     "quote": "A 120 s run with no input: `Audio system initialized`, shaders loaded, `Running game session`, the attract demo in game at 30 s (Master Levels, \"Level 1: Attack\", pickups and status bar drawn), the DOOM main menu with the controller prompts at 110 s, all at 120 FPS on the window counter (12,800 frames by 110 s).",
+     "reason": "With no input the in-game frames are the attract demo and the menu is not shown to respond (Windows 11, RTX 5090, main at 84b01f9cd with #5916, merged since). A newer Linux run reaches E1M1 on main e072e8840a, but with a commit from #8621, still open."},
+    {"title": "PPSA01907", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/6341#issuecomment-6225781873",
+     "verdict": "suppressed",
+     "quote": "Clean integration 46458ceb4584 on main e9a3343a2 includes this PR plus the declared #6959/#6934/#6913/#862/#6781 title fixes; it is not an isolated performance comparison.",
+     "reason": "Main menu reached on an integration stack that includes #6959, #6913 and #862, still open."},
+    {"title": "PPSA02688", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6996#discussioncomment-19004057",
+     "verdict": "suppressed",
+     "quote": "The native result is for the existing combined integration stack plus this fix, not an isolated current-main A/B or a separately built standalone branch.",
+     "reason": "Gameplay reached on an integration stack (bfdd817a1, not upstream), not on main."},
+    {"title": "PPSA03061", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5055#issuecomment-6150608019",
+     "verdict": "suppressed",
+     "quote": "Could you please review and merge #5219 and #5140 to land these title unblocks on `main`?",
+     "reason": "Gameplay reached with #5140, which was closed without merge; #5219 and #5139 are merged now, so a rerun on plain main may qualify."},
+    {"title": "PPSA04159", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/pull/5016#issuecomment-6157081965",
+     "verdict": "suppressed",
+     "quote": "Clip distances are on `main` now (04138f50a), so PPSA04159 should reach its menu there.",
+     "reason": "An expectation in a review, not a run of the title."},
+    {"title": "PPSA07426", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5529#issuecomment-6256383050",
+     "verdict": "suppressed",
+     "quote": "Hello Neighbor 2 (PPSA07426, 01.000.000) on your branch `f9d780325`, Windows 11 Pro 26200, Ryzen 9 7900, RTX 4070 12 GB (NVIDIA 616.92), WinLibs GCC 15.2.0.",
+     "reason": "Run on a contributor branch (f9d780325, not upstream)."},
+    {"title": "PPSA16833", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5488#issuecomment-6229284555",
+     "verdict": "suppressed",
+     "quote": "**Build:** `main` `5d9dcc42d` (has #5213 and #5232) + #6694 + #6699 + the `sceWebBrowserDialogOpenForPredeterminedContent` hunk of #6447, plus two input-only changes.",
+     "reason": "Run with a hunk of #6447, closed without merge, and local input changes."},
+    {"title": "PPSA18176", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/2690",
+     "verdict": "suppressed",
+     "quote": "This is a local selective-integration fork branch, **not unmodified current upstream main**.",
+     "reason": "The first post is a local integration fork branch and reports only the title screen; the Linux follow-up (discussioncomment-19048932) is on main plus local changes."},
+    {"title": "PPSA18216", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/5268#discussioncomment-18948399",
+     "verdict": "suppressed",
+     "quote": "The probe is needed to reach this point.",
+     "reason": "The title screen needs a local probe and a local revert of #6000."},
+    {"title": "PPSA21703", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/1#issuecomment-6140534450",
+     "verdict": "suppressed",
+     "quote": "These results are from a modified local x86-64 AnyPS5 runtime under Rosetta with MoltenVK, not a clean-main compatibility claim.",
+     "reason": "Run on a modified local macOS runtime."},
+    {"title": "PPSA22102", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/7947",
+     "verdict": "suppressed",
+     "quote": "**Build:** `cbdf973fd568` (dirty) - the local fix-branch tree (carries the AGC storage write-back fix now in #7912 and the libc fixes of #7905/#7906; not a clean `main` build).",
+     "reason": "Run on a dirty local commit (cbdf973fd568) that is not upstream; #7912, whose fix it carried, was merged on 2026-10-21."},
+    {"title": "PPSA30528", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/5895",
+     "verdict": "suppressed",
+     "quote": "A/B on the same machine and scene, 3 interleaved runs per side, base = `main` a0f5916a2 + the local changes RDR needs to start:",
+     "reason": "Run with local changes the title needs to start."},
+    {"title": "PPSA31327", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/6722",
+     "verdict": "suppressed",
+     "quote": "`main` bf2c63f85 with #6572 (`CLIP_DISABLE`) and #7719 (audio).",
+     "reason": "Run with #6572 and #7719, both closed without merge, and a local playgo-chunkdefs.xml workaround for the missing PlayGo files."},
+    {"title": "PPSA34063", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/7635",
+     "verdict": "suppressed",
+     "quote": "With `ANYPS5_OUTPUT_4K=1` from the fork commit `poonasor/AnyPS5@ba61a98eb` (not on main) the same run does not crash and the picture displays.",
+     "reason": "The picture displays only with a fork commit, and the build also had local libc changes."},
+    {"title": "PPSA34501", "claim": "Ingame", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/6304#issuecomment-6227638116",
+     "verdict": "suppressed",
+     "quote": "I solved the same issue today I can play menu 30 fps cutscenes 60 fps kino der toten avrage 20-30 low 15 high 45",
+     "reason": "No code tree, commit or pull requests are given for the run, and the question that follows asking for them is unanswered."},
+    {"title": "PPSA35154", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/discussions/357#discussioncomment-18999833",
+     "verdict": "suppressed",
+     "quote": "The same patch, adapted to main 47a266cf9 (after #6060), was tested on Hello Neighbor (PPSA35154, UE4) with the profiler on: 3.4 → 5.1 FPS in game, and 23.6 → 30.6 FPS in the main menu (#6991).",
+     "reason": "Run on main 47a266cf9 plus a locally adapted patch, which is not a merged pull request."},
+    {"title": "PPSA35169", "claim": "Menus", "claim_url": "https://github.com/boykopovar/AnyPS5/issues/4246",
+     "verdict": "suppressed",
+     "quote": "**Repro.** Relinked and launched PPSA35169 against a fresh `upstream/main` build (`7a84b2226`, plus the `libkernel`/`libSceAmpr` fixes from #4214).",
+     "reason": "Run with libkernel and libSceAmpr fixes from fork branches (linked in #4214), and it aborts on an unimplemented NGS2 custom module (id 0x20) during gameplay setup, so no menu is shown."}
+  ],
+  "titles": [
+    {
+      "id": "PPSA02929", "name": "Dreaming Sarah", "kind": "retail",
+      "evidence": [
+        {"stage": "Playable", "os": "Windows", "build": "main", "url": "https://github.com/boykopovar/AnyPS5/discussions/2475#discussioncomment-18886410", "note": "Archived report from the removed docs/user/COMPATIBILITY.md: in game, playable, 60 FPS on GTX 1050 Ti, 36 FPS on Intel HD 620"}
+      ]
+    },
+    {
+      "id": "PPSA03306", "name": "Silt", "kind": "retail",
+      "evidence": [
+        {"stage": "Ingame", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13", "url": "https://github.com/boykopovar/AnyPS5/discussions/2810#discussioncomment-18900781", "note": "main ff8fe4d, RX 5700 XT: boots, reaches the menu and plays with sound; save data mounts and GameSave.bin is written; no local changes or environment variables"}
+      ]
+    },
+    {
+      "id": "PPSA06399", "name": "PAC-MAN WORLD Re-PAC", "kind": "retail",
+      "evidence": [
+        {"stage": "Ingame", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13", "url": "https://github.com/boykopovar/AnyPS5/discussions/3443#discussioncomment-18901719", "note": "main ff8fe4d, RX 5700 XT: boots to the title screen, loads the save data and plays a level with audio; no local changes or environment variables"}
+      ]
+    },
+    {
+      "id": "PPSA99666", "name": "DOOM Shareware (homebrew)", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main + #553, #683, #684, #685", "url": "https://github.com/boykopovar/AnyPS5/discussions/2475#discussioncomment-18886410", "note": "Archived report from the removed docs/user/COMPATIBILITY.md: E1M1 movement and shooting on an RTX 4070; the later maps, save/load and audio were seen only with a local stack of open PRs (#690)"},
+        {"stage": "Ingame", "os": "Linux", "build": "main + #1278, #1279, #1307", "url": "https://github.com/boykopovar/AnyPS5/discussions/2475#discussioncomment-18886410", "note": "Archived report: E1M1 at 35 FPS on Mesa llvmpipe, software Vulkan only"},
+        {"stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-11",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/3775", "note": "main a11c8f7f7, RTX 3080 Ti: E1M1 at 35 FPS; movement, firing, a pickup and the automap with APS5_PAD_INPUT_FILE"},
+        {"stage": "Ingame", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-11",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/3834", "note": "main a11c8f7f7, Ryzen 5 PRO 5650U graphics (RADV): E1M1 and E1M2 completed at 35 FPS with a DualShock 4, audio heard, save/load round trip"},
+        {"stage": "Ingame", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4312", "note": "main b42ef24e0, RX 9060 XT and Ryzen 9 7950X graphics: menus, a new game, movement, pickups and firing in E1M1 with an Xbox One controller, audio heard"}
+      ]
+    },
+    {
+      "id": "PPSA30279", "name": "Taxi Chaos 2", "engine": "Unreal Engine", "kind": "retail",
+      "paths": ["Windows/NVIDIA", "Windows/AMD"],
+      "blockers": [
+        {"id": "2783", "scope": ["Windows/NVIDIA"], "why": "culling vertex programs fail to prepare at subgroup size 32"},
+        {"id": "2548", "why": "first fatal stop on AMD"},
+        {"id": "pr-2054", "why": "direct-memory stall, then the 120 s RenderThread watchdog"},
+        {"id": "1409", "why": "compute takes the depth plane of a 512x512 surface as a 2048x2048 storage image"},
+        {"id": "pr-425", "why": "D16 depth target sampled as a cube"},
+        {"id": "2102", "why": "first menu frame draws into several array slices"}
+      ],
+      "evidence": [
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main + local patches", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/2783", "note": "Intro video at 35-60 FPS with a local narrow-wave patch, then black frames and the direct-memory stall"},
+        {"stage": "Presents", "os": "Windows", "gpu": "AMD", "build": "main + local patches", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/2102#issuecomment-6099873138", "note": "Main menu runs (music plays) but frames stay black; stops at its first menu frame"}
+      ]
+    },
+    {
+      "id": "PPSA02100", "name": "Stray", "engine": "Unreal Engine 4", "kind": "retail",
+      "blockers": [{"id": "2548", "why": "402 shaders fail to prepare"}],
+      "evidence": [
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/2749", "note": "Never renders past the loading screen"},
+        {"stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/2461#discussioncomment-18921800", "note": "plain main eecf90953, RTX 3090, relinked with the title's own sce_module libraries, no save data: gameplay at the start of Dead City with correct rendering, about 12 FPS, no crash in 4 minutes; some runs drop to about 1 FPS (import race, same discussion, 2026-10-17)"}
+      ]
+    },
+    {"id": "PPSA14632", "name": "LEGO Horizon Adventures", "kind": "retail", "blockers": [{"id": "2548", "why": "shaders refused by the visit limit"}]},
+    {"id": "PPSA01746", "name": "Kena: Bridge of Spirits", "kind": "retail", "blockers": [{"id": "2548", "why": "loop (back-edge phi) cases"}]},
+    {"id": "PPSA01802", "name": "Kena: Bridge of Spirits", "kind": "retail", "blockers": [{"id": "2548", "why": "loop (back-edge phi) cases"}]},
+    {"id": "PPSA10261", "name": "Lies of P", "engine": "Unreal Engine 4", "kind": "retail", "blockers": [{"id": "2548", "why": "listed on #2548"}]},
+    {"id": "PPSA01474", "name": "Ratchet & Clank: Rift Apart", "kind": "retail", "blockers": [{"id": "2102", "why": "stops about 25 s in"}]},
+    {
+      "id": "PPSA33286", "name": "Silent Hill: Townfall", "kind": "retail",
+      "blockers": [{"id": "2102", "why": "stops at its first presentation"}]
+    },
+    {"id": "PPSA03001", "name": "Sifu", "engine": "Unreal Engine 4", "kind": "retail", "blockers": [{"id": "1409", "why": "same 8-bit storage access pattern"}]},
+    {
+      "id": "PPSA68091", "name": "Ruffle Flash", "kind": "homebrew",
+      "blockers": [{"id": "pr-2106", "why": "next import stop"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main 9a3e2ac4d, Radeon 860M, relinked with --windows-fixed-base 0x400000 (#4013), 60 s: library screen (No games yet) at 81 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99007", "name": "Yamagi Quake II", "kind": "homebrew",
+      "blockers": [{"id": "pr-2106", "why": "next import stop"}, {"id": "pr-1872", "why": "first stop on main b8a083b2"}],
+      "excluded": [{"id": "4399", "why": "named in #4399 without a traced stop; main f87799aa3 runs its main menu 60 s without a stop"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: main menu at 59.9 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA69420", "name": "ScreenTester5", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/1578#issuecomment-6147459438", "note": "main 6cd05284, Radeon 860M, 60 s with pad pulses: help overlay; Cross turns the screen white and Square green, one present per press"}
+      ],
+      "blockers": [{"id": "pr-1872", "why": "first stop on main b8a083b2"}]
+    },
+    {
+      "id": "PPSA99039", "name": "EVO Player", "kind": "homebrew",
+      "blockers": [{"id": "pr-1872", "why": "first stop on main b8a083b2"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/4997#issuecomment-6162952305", "note": "main d8888df9b, Radeon 860M, 60 s: home screen with the library tiles at 60.0 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99177", "name": "PS5VR", "kind": "homebrew",
+      "blockers": [{"id": "pr-1872", "why": "first stop on main b8a083b2"}, {"id": "pr-1922", "why": "next stop with #3031"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M: home screen (Put on your PlayStation VR2) after 46.7 s of refused loopback connects; without a headset it presents only that frame"}
+      ]
+    },
+    {
+      "id": "PPSA99109", "name": "Prospero Explorer", "engine": ".NET NativeAOT", "kind": "homebrew", "paths": ["Windows", "Linux"],
+      "blockers": [{"id": "2761", "scope": ["Windows"], "why": "faults reading 0x28 through an unpatched TLS read"}, {"id": "pr-2106", "why": "pthread_sigmask import"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: file browser at 15.2 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99110", "name": "Prospero Multi Tools", "engine": ".NET NativeAOT", "kind": "homebrew", "paths": ["Windows", "Linux"],
+      "blockers": [{"id": "2761", "scope": ["Windows"], "why": "faults reading 0x28 through an unpatched TLS read"}, {"id": "pr-2106", "why": "pthread_sigmask import"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: tool list at 12.9 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99920", "name": "Prospero Vibrate", "engine": ".NET NativeAOT", "kind": "homebrew", "paths": ["Windows", "Linux"],
+      "blockers": [{"id": "2761", "scope": ["Windows"], "why": "faults reading 0x28 through an unpatched TLS read"}, {"id": "pr-2106", "why": "pthread_sigmask import"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + #2821, #2106 and AlxcBTW#21", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/2761", "note": "Stays up for 40 s and draws its full UI"}
+      ]
+    },
+    {
+      "id": "PPSA99050", "name": "Homebrew UI Lab", "engine": "Mesa (OpenGL)", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; full home screen"},
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + AlxcBTW#12", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6095663977", "note": "Full home screen renders"}
+      ]
+    },
+    {
+      "id": "PPSA39410", "name": "VITA5", "engine": "Mesa (OpenGL)", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; Dock your PS Vita screen"},
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + AlxcBTW#12", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6095663977", "note": "Complete UI renders"}
+      ]
+    },
+    {
+      "id": "PPSA99005", "name": "ps5-opengl showcase", "engine": "Mesa (OpenGL)", "kind": "homebrew",
+      "blockers": [
+        {"id": "2631", "why": "first stop on main ce4263b1, at its first draw"}
+      ],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run"}],
+      "evidence": [
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; text overlay over a black scene; 988 draw-rejected status=-12 lines in its own log, not looked into"},
+        {"stage": "First draw", "os": "Windows", "gpu": "NVIDIA", "build": "main + AlxcBTW#12", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/1413#issuecomment-6095663977", "note": "Gets past the P10 check, then ends on its own 2 s retirement wait"}
+      ]
+    },
+    {
+      "id": "PPSA11386", "name": "007 First Light", "kind": "retail",
+      "blockers": [{"id": "pr-2471", "why": "stop-9 shader has the shared-loop-exit shape"}],
+      "evidence": [
+        {"stage": "Starts", "os": "Linux", "gpu": "NVIDIA", "build": "main a883f22f", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/3134", "note": "Creates its swapchain, then stops after 0.6 s on VideoOut: unsupported display pixel format"}
+      ]
+    },
+    {
+      "id": "PPSA98001", "name": "PokeMMO", "kind": "homebrew",
+      "blockers": [
+        {"id": "siglongjmp", "why": "first stop on main 57f96fd2"},
+        {"id": "pr-1482", "why": "import needed for start-up"},
+        {"id": "pr-2106", "why": "import needed for start-up"},
+        {"id": "pr-1872", "why": "import needed for start-up"},
+        {"id": "2631", "why": "stops after about 6 s at v_fma_mixlo/mixhi"}
+      ],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main + #1482, #2106, #1872, siglongjmp and AlxcBTW#19", "date": "2026-10-10",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/2631#issuecomment-6097885704", "note": "Start screen at 54 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99000", "name": "ProsperoStore", "kind": "homebrew",
+      "blockers": [
+        {"id": "pr-1482", "why": "first stop on main ccf9ff90, after #2945"},
+        {"id": "pr-1841", "why": "getcontext, setcontext and makecontext are absent imports"},
+        {"id": "2631", "why": "first stop on main a11c8f7f, 19 s after the store UI starts"}
+      ],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run; the stop on main 3d8ffeb2 is gone"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; Discover page, offline catalog message"},
+        {"stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main 3d8ffeb2", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4030#issuecomment-6123261683", "note": "Stops at the provoking-vertex line after 34 s"},
+        {"stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main a11c8f7f", "date": "2026-10-11",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/3512#issuecomment-6109421521", "note": "Store UI starts, then aborts after 19 s in v_fma_mixlo/mixhi_f16"}
+      ]
+    },
+    {
+      "id": "PPSA99010", "name": "vkQuake", "kind": "homebrew",
+      "blockers": [
+        {"id": "3165", "why": "first stop on main 0f863c10"},
+        {"id": "pr-1482", "why": "stop on main 9c5d67fb with #2967"}
+      ],
+      "excluded": [
+        {"id": "3249", "why": "localeconv is on main since #545; vkQuake exits cleanly for lack of game data in the 2ccbd376 catalog run"}
+      ]
+    },
+    {
+      "id": "PPSA19111", "name": "XashPS5", "kind": "homebrew",
+      "blockers": [{"id": "3165", "why": "first stop on main 0f863c10"}]
+    },
+    {
+      "id": "PPSA59322", "name": "ccleste", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-12", "url": "https://github.com/boykopovar/AnyPS5/issues/4664#issuecomment-6131506152", "note": "main cf4557e5 (with #4536), RTX 4080, 60 s: title screen (logo, credits, PS5 PORT, falling snow) in the frames saved every 300 presents"}
+      ],
+      "blockers": [
+        {"id": "3165", "why": "first stop on main 0f863c10"},
+        {"id": "pr-4536", "why": "stall after Vulkan device ready on main 0ef9dc92 and 9aa5fd29; fixed by #4536 (21c27e60), swapchain created on main cf4557e5"}
+      ]
+    },
+    {
+      "id": "PPSA76677", "name": "RommPS", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-12", "url": "https://github.com/boykopovar/AnyPS5/issues/4664#issuecomment-6131506152", "note": "main cf4557e5 (with #4536), RTX 4080, 60 s: draws its own \"RomM Sync isn't running\" screen; its payload loader on port 9021 refuses the connection"}
+      ],
+      "blockers": [
+        {"id": "3165", "why": "first stop on main 0f863c10"},
+        {"id": "pr-4536", "why": "stall after Vulkan device ready on main 0ef9dc92 and 9aa5fd29; fixed by #4536 (21c27e60), swapchain created on main cf4557e5"}
+      ]
+    },
+    {
+      "id": "PPSA99002", "name": "ProsperoLight", "kind": "homebrew",
+      "blockers": [{"id": "3165", "why": "first stop on main 0f863c10"}]
+    },
+    {
+      "id": "PPSA99810", "name": "PSBox Cloud Gaming", "kind": "homebrew",
+      "blockers": [{"id": "3165", "why": "first stop on main 0f863c10 and a11c8f7f"}],
+      "excluded": [{"id": "3369", "why": "its stop is the same with and without #3365 (42-executable batch in #3369)"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Sign in to play screen at 13.4 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA97510", "name": "PSXS5", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/4478#issuecomment-6147457790", "note": "main 6cd05284, Radeon 860M, 60 s with pad pulses: empty library screen at 60 FPS; a press shows the Sorted by Recently played toast"}
+      ],
+      "blockers": [
+        {"id": "3501", "why": "first stop on main a11c8f7f"},
+        {"id": "3165", "why": "next stop once reallocf is in"}
+      ]
+    },
+    {
+      "id": "PPSA98510", "name": "SwanStationPS5", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/4478#issuecomment-6147458326", "note": "main 6cd05284, Radeon 860M, 60 s with pad pulses: empty library screen; a press shows the Sorted by Recently played toast"}
+      ],
+      "blockers": [
+        {"id": "3501", "why": "first stop on main a11c8f7f"},
+        {"id": "3165", "why": "next stop once reallocf is in"}
+      ]
+    },
+    {
+      "id": "PPSA01153", "name": "OliSe Player", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0xb04df7 (SDK generic syscall stub); with the stubs trapped, the next stop is the import 04AjkP0jO9U"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: main menu at 59.9 FPS (one run); relinked with --trap-sdk-syscall-stubs"}
+      ]
+    },
+    {
+      "id": "PPSA99004", "name": "ProsperoAI", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x1108bf7 (SDK generic syscall stub); with the stubs trapped, the next stop is the import 5G2ONUzRgjY"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: workspace home at 8.4 FPS; relinked with --trap-sdk-syscall-stubs; second run, the first with empty caches hits the RADV 10 s submission wait"}
+      ]
+    },
+    {
+      "id": "PPSA99008", "name": "ProsperoEden", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/4852#discussioncomment-18902743", "note": "main 6cd05284, Radeon 860M, 60 s with pad pulses: home screen with Library/Settings/About tabs; D-pad right moves the highlighted tab"}
+      ],
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x214dcda (SDK link stub, syscall number 9); with the stubs trapped, the next stop is the import 5G2ONUzRgjY"}]
+    },
+    {
+      "id": "PPSA99305", "name": "Dusklight", "kind": "homebrew",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-13",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/3651#issuecomment-6147458953", "note": "main 6cd05284 with #3651 and #5036 merged, Radeon 860M, 60 s with pad pulses: title menu; D-pad down moves the selection; no disc image"}
+      ]
+    },
+    {
+      "id": "PPSA99011", "name": "PS5 FSR4 Showcase", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x511d17 (SDK generic syscall stub); with the stubs trapped, the next stop is the import r28hEh6cNH0"}]
+    },
+    {
+      "id": "PPSA99203", "name": "PS5SX2", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x10a2d37 (SDK generic syscall stub); with the stubs trapped, the next stop is the import aML18Z0J0t0"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: library screen (No games in /data/PCSX2/games) at 31.1 FPS; relinked with --trap-sdk-syscall-stubs"}
+      ]
+    },
+    {
+      "id": "PPSA99204", "name": "PS5NES", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0xc43f97 (SDK generic syscall stub); the catalog download returns 404 on 2026-10-11; with the stubs trapped, the next stop is the import VUzjXknPPBs"}]
+    },
+    {
+      "id": "PPSA99206", "name": "PS5N64", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0xcb9da7 (SDK generic syscall stub); the catalog download returns 404 on 2026-10-11; with the stubs trapped, the next stop is the import oxMp8uPqa+U"}]
+    },
+    {
+      "id": "PPSA99288", "name": "Nuvio Max'd", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x21a6cda; not an SDK stub, so it still fails with the stubs trapped"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: sign-in screen with a QR code at 39.8 FPS; relinked with --trap-sdk-syscall-stubs"}
+      ]
+    },
+    {
+      "id": "PPSA99360", "name": "PS5CEMU-HAR", "kind": "homebrew",
+      "blockers": [{"id": "2136", "why": "first stop on main 6c9cb3a5, at 0x1699f07 (SDK generic syscall stub); with the stubs trapped, the next stop is the import 04AjkP0jO9U"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Let's check your setup screen at 10.6 FPS; relinked with --trap-sdk-syscall-stubs"}
+      ]
+    },
+    {
+      "id": "PPSA99600", "name": "Cloud Play", "kind": "homebrew",
+      "blockers": [
+        {"id": "3734", "why": "first stop on main 3d8ffeb2 and 2ccbd376"},
+        {"id": "pr-3700", "why": "next stop with #3798 applied"},
+        {"id": "pr-1482", "why": "_umtx_op is an absent import"},
+        {"id": "pr-1841", "why": "getcontext, setcontext and makecontext are absent imports"}
+      ],
+      "excluded": [
+        {"id": "3249", "why": "localeconv is on main since #545; the title loads past it"}
+      ],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: streaming settings at 29.8 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA17641", "name": "SymphonyStation5", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run; the stop on main 3d8ffeb2 is gone"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; login form"},
+        {"stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main 3d8ffeb2", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4030#issuecomment-6123261683", "note": "Stops at the provoking-vertex line after 27 s"}
+      ]
+    },
+    {
+      "id": "PPSA74126", "name": "Stremio Plus", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run; the stop on main 3d8ffeb2 is gone"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Link your account screen at 59.9 FPS"},
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; draws its App storage is unavailable screen"},
+        {"stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main 3d8ffeb2", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4030#issuecomment-6123261683", "note": "Stops at the provoking-vertex line"}
+      ]
+    },
+    {
+      "id": "PPSA99930", "name": "Forwarder Manager", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run; the stop on main 3d8ffeb2 is gone"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Create a forwarder screen at 28.9 FPS"},
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; draws its No access to /data/homebrew screen"},
+        {"stage": "Starts", "os": "Windows", "gpu": "NVIDIA", "build": "main 3d8ffeb2", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4030#issuecomment-6123261683", "note": "Stops at the provoking-vertex line after 31 s"}
+      ]
+    },
+    {
+      "id": "PPSA99003", "name": "ProsperoTV", "kind": "homebrew",
+      "blockers": [
+        {"id": "3521", "why": "first stop on main 3d8ffeb2 and 2a5eca11: poll on a pipe read end"}
+      ],
+      "excluded": [{"id": "1413", "why": "with #3649 on main d592d54e poll is its only stop and it reaches Vulkan device ready (boykopovar/AnyPS5#3649, comment 6127378678)"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: home at 6.1 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99051", "name": "Surround Sound Studio", "kind": "homebrew",
+      "blockers": [],
+      "excluded": [{"id": "1413", "why": "no provoking-vertex stop on main 2a5eca11 (after #4030) in a 60 s run; the earlier sceAudioOutSysGetHdmiMonitorInfo stop is gone too"}],
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main 2a5eca11", "date": "2026-10-12",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/3581#issuecomment-6129427574", "note": "Runs 60 s; Passthrough page"}
+      ]
+    },
+    {"id": "PPSA22520", "name": "Animal Well"},
+    {"id": "PPSA29141", "name": "LEGO Party!", "engine": "Unity"},
+    {"id": "PPSA01284", "name": "Returnal", "name_sources": ["https://prosperopatches.com/PPSA01284", "https://store.playstation.com/en-us/product/UP9000-PPSA01284%5F00-RETURNALGAME0001"]},
+    {"id": "PPSA01317", "name": "Gran Turismo 7", "name_sources": ["https://prosperopatches.com/PPSA01317"]},
+    {"id": "PPSA02015", "name": "Death Stranding 2: On the Beach", "name_sources": ["https://prosperopatches.com/PPSA02015"]},
+    {"id": "PPSA03974", "name": "Cyberpunk 2077", "name_sources": ["https://prosperopatches.com/PPSA03974"]},
+    {"id": "PPSA15186", "name": "Vampire: The Masquerade - Bloodlines 2", "name_sources": ["https://prosperopatches.com/PPSA15186"]},
+    {"id": "PPSA15388", "name": "High on Life", "name_sources": ["https://prosperopatches.com/PPSA15388", "https://store.playstation.com/en-us/product/UP3024-PPSA15388_00-0636789504534087"]},
+    {"id": "PPSA18391", "name": "Afterdream", "name_sources": ["https://prosperopatches.com/PPSA18391"]},
+    {"id": "PPSA18605", "name": "Ready or Not", "name_sources": ["https://prosperopatches.com/PPSA18605", "https://store.playstation.com/ja-jp/product/UP6322-PPSA18605_00-0342498734252743"]},
+    {"id": "PPSA20612", "name": "Dragon Quest III HD-2D Remake", "name_sources": ["https://prosperopatches.com/PPSA20612"]},
+    {"id": "PPSA27836", "name": "Onimusha: Way of the Sword", "name_sources": ["https://prosperopatches.com/PPSA27836", "https://store.playstation.com/en-us/product/UP0102-PPSA27836_00-0000000000000001"]},
+    {"id": "PPSA34356", "name": "Marsupilami 2 - Salsa Palombia", "name_sources": ["https://prosperopatches.com/PPSA34356", "https://store.playstation.com/en-tw/product/EP4295-PPSA34356_00-MARSU2PS500000EU"]},
+    {"id": "PPSA01825", "name": "The Pathless", "name_sources": ["https://prosperopatches.com/PPSA01825"]},
+    {"id": "PPSA21444", "name": "DOOM + DOOM II", "name_sources": ["https://prosperopatches.com/PPSA21444"]},
+    {"id": "PPSA25573", "name": "Extinction Rifts", "name_sources": ["https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv", "https://store.playstation.com/en-us/concept/10011998"]},
+    {"id": "PPSA26223", "name": "The Mound: Omen of Cthulhu", "name_sources": ["https://prosperopatches.com/PPSA26223"]},
+    {"id": "PPSA34823", "name": "New Super Lucky's Tale", "name_sources": ["https://prosperopatches.com/PPSA34823", "https://store.playstation.com/en-gb/product/EP4293-PPSA34823_00-NSLT000000000PS5"]},
+    {"id": "PPSA01494", "name": "Borderlands 4", "name_sources": ["https://prosperopatches.com/PPSA01494", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA02664", "name": "Alex Kidd in Miracle World DX", "name_sources": ["https://prosperopatches.com/PPSA02664", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA03524", "name": "Grand Theft Auto: San Andreas - The Definitive Edition", "name_sources": ["https://prosperopatches.com/PPSA03524", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA06888", "name": "Sonic Superstars", "name_sources": ["https://prosperopatches.com/PPSA06888", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA07906", "name": "Still Wakes the Deep", "name_sources": ["https://prosperopatches.com/PPSA07906", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA09030", "name": "Phasmophobia", "name_sources": ["https://prosperopatches.com/PPSA09030", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA13427", "name": "Horizon Zero Dawn Remastered", "name_sources": ["https://prosperopatches.com/PPSA13427", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA15304", "name": "Metal Gear Solid Δ: Snake Eater", "name_sources": ["https://prosperopatches.com/PPSA15304", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA17697", "name": "Yatzi", "name_sources": ["https://prosperopatches.com/PPSA17697", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA19769", "name": "Two Point Museum", "name_sources": ["https://prosperopatches.com/PPSA19769", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA20515", "name": "Enotria", "name_sources": ["https://prosperopatches.com/PPSA20515", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA22996", "name": "AAA Dynamic Scenes", "name_sources": ["https://prosperopatches.com/PPSA22996", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA25936", "name": "永久與神樹的祈願者", "name_sources": ["https://prosperopatches.com/PPSA25936", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA28002", "name": "Ninja Gaiden: Ragebound", "name_sources": ["https://prosperopatches.com/PPSA28002", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA28038", "name": "Halo: Campaign Evolved", "name_sources": ["https://prosperopatches.com/PPSA28038", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA34502", "name": "Call of Duty: Black Ops II", "name_sources": ["https://prosperopatches.com/PPSA34502", "https://github.com/andshrew/PlayStation-Titles/blob/main/PS5_Titles_by_Name.tsv"]},
+    {"id": "PPSA77711", "name": "Stremio", "kind": "homebrew", "name_sources": ["https://github.com/blackbearreloaded/ps5-homebrew-catalog/blob/main/apps/PPSA77711.json", "https://github.com/Sp9nky/unofficial-stremio-ps5-port"]},
+    {"id": "PPSA99310", "name": "Mario 64", "kind": "homebrew", "name_sources": ["https://github.com/blackbearreloaded/ps5-homebrew-catalog/blob/main/apps/PPSA99310.json", "https://github.com/griches/PS5_Ghostship"]},
+    {
+      "id": "PPSA16827", "name": "Harmony's Odyssey", "engine": "Unity", "kind": "retail",
+      "name_sources": ["https://store.playstation.com/en-hk/product/HP7621-PPSA16827_00-HARMONYPS5ASIA00"],
+      "evidence": [
+        {"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "c080fc2d + local workaround (2 files)", "date": "2026-10-13",
+         "url": "https://github.com/Zibo176/SilkSongFork/blob/harmony-odyssey-workaround/HarmonyOdyssey_PPSA16827.md",
+         "note": "Zibo176 (roadmap #49, RTX 4060) saw Menus, but only on a branch with a local 2-file libc patch (Unwind.hpp, Exports.cpp), so the page keeps the Menus claim unverified. Clean main stops before the first frame: libSceAgcDriver.prx cannot resolve _ZN10LibcUnwind11CursorSlotsE (GetLastError 127). Upstream #5014 (merged 2026-10-13) hands the table out through a _nid_no_patch export; the report does not test it. With the patch: stable 60+ s, AGC/Vulkan active, about 16-17 FPS, screenshot https://github.com/Zibo176/SilkSongFork/blob/harmony-odyssey-workaround/screenshots/harmony-odyssey/runtime-01-workaround.png. Menus needs a re-run on main with #5014."}
+      ]
+    },
+    {
+      "id": "PPSA92280",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: game list at 59.9 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA98766",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: controller test screen at 59.9 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99141",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Choose your Jellyfin server screen at 69.9 FPS; second run, the first with empty caches hits the RADV 10 s submission wait"}
+      ]
+    },
+    {
+      "id": "PPSA99082",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: Press CROSS to sign in with NVIDIA screen at 25.8 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99728",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: game files setup screen (waiting for the game files) at 59.9 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99009",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: home with offline puzzles at 5.3 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99001",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: station browser at 27.8 FPS; Radio Browser cannot be reached without network"}
+      ]
+    },
+    {
+      "id": "PPSA99773",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: captures screen at 60.0 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99350",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5745", "note": "main d8888df9b, Radeon 860M, 60 s: looking for a PC running Steam at 119.5 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99505",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/4997#issuecomment-6162952305", "note": "main d8888df9b, Radeon 860M, 60 s: Connect to Jellyfin or Emby server screen at 57.5 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA99515",
+      "evidence": [
+        {"stage": "Menus", "os": "Windows", "gpu": "AMD", "build": "main", "date": "2026-10-14",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/4997#issuecomment-6162952305", "note": "main d8888df9b, Radeon 860M, 60 s: Connect to Emby server screen at 47.8 FPS"}
+      ]
+    },
+    {
+      "id": "PPSA29413",
+      "evidence": [
+        {"stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-15",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/2211#discussioncomment-18947061", "note": "main 8856f18, RTX 3060 Ti, relinked with --registry, --module-dir and --to-intel: boots to gameplay; main menu at 35 FPS, in game at 12 FPS; the 3D view corrupts after map use (#5335)"}
+      ]
+    },
+    {
+      "id": "PPSA16064",
+      "blockers": [{"id": "6301", "why": "the first world load stops here on plain main (636b1b93c, 5d9dcc42d); #6308 moves it on"}],
+      "evidence": [
+        {"stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-19T08:48:43Z",
+         "url": "https://github.com/AlxcBTW/AnyPS5/issues/56#issuecomment-6263358753", "note": "plain main 46f27623c, no PRs, RTX 4060 8 GB, automatic texture cache: loading a save reaches gameplay (HUD, minimap and the Escape from Squid Coast objective at 415 s), then walking in all four directions at 3.5 FPS; the #6301 stop did not occur in this run, world loads still crash in some runs (timing-dependent, a different failure)"},
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-15T14:10:27Z",
+         "url": "https://github.com/AlxcBTW/AnyPS5/issues/56#issuecomment-6194113860", "note": "plain main 0e4ea13a0, RTX 5070 Laptop 8 GB: the title screen for 300 s at 2.2 FPS"},
+        {"stage": "Menus", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-15T13:44:51Z",
+         "url": "https://github.com/AlxcBTW/AnyPS5/issues/56#issuecomment-6193568996", "note": "main fdea36b83 with measurement-only prints, RTX 3060 and RTX 4060: the title screen (Press any button) renders, no stop in 240 s"}
+      ]
+    },
+    {
+      "id": "PPSA02453", "engine": "Unity",
+      "evidence": [
+        {"stage": "Ingame", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-18",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4449#issuecomment-6253726244", "note": "plain main 61d3d3080, no PRs, RX 6650 XT (RADV): title screen, new game, the lifepod intro, swimming on the surface and underwater, rendering looks right; loading stalls for minutes, about 20 FPS on the title screen and 5-10 FPS in game"}
+      ]
+    },
+    {
+      "id": "PPSA21607",
+      "evidence": [
+        {"stage": "Ingame", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-18",
+         "url": "https://github.com/boykopovar/AnyPS5/issues/6528#issuecomment-6249264454", "note": "plain main 9f25d0bf5, no PRs, RX 6650 XT (RADV): main menu, then the Smurfs' Village with player control; the village renders almost black and the 3D menu background stays black (mesh output layer limit, #6528)"}
+      ]
+    },
+    {
+      "id": "PPSA02457", "engine": "Unity",
+      "evidence": [
+        {"stage": "Ingame", "os": "Linux", "gpu": "AMD", "build": "main", "date": "2026-10-19",
+         "url": "https://github.com/boykopovar/AnyPS5/pull/4449#issuecomment-6273368796", "note": "plain main 7a015c094, no PRs, RX 6650 XT (RADV): boots, loads, plays the intro and gives player control afterwards, the image looks right; the first run stalled in loading for over 3 minutes and a restart got through, about 92 presents per 10 s in game"}
+      ]
+    },
+    {
+      "id": "PPSA06699",
+      "evidence": [
+        {"stage": "Playable", "os": "Windows", "gpu": "NVIDIA", "build": "main + #3636, #3696, #3697", "date": "2026-10-11",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/3839", "note": "main a11c8f7f7 with #3636, #3696 and #3697 (all merged since), RTX 4070 SUPER: in game, playable; menus at 60 FPS, the 3D course at 45-49 FPS in heavy scenes on main and about 60 FPS with the performance PRs #1201, #1202 and #1193 (merged since) and #1191 (open)"}
+      ]
+    },
+    {
+      "id": "PPSA34501",
+      "evidence": [
+        {"stage": "Ingame", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-21",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/5389", "note": "plain main e072e88, RTX 2060: the whole campaign from Operation 40 to Redemption without crashes, multiplayer maps and modes, and the three Zombies maps; on main 15-20 FPS in the main menu, 5-15 FPS indoors and 3-10 FPS outdoors; split-screen for up to 4 controllers needs #7881 (open)"}
+      ]
+    },
+    {
+      "id": "PPSA18176",
+      "evidence": [
+        {"stage": "Ingame", "os": "Linux", "gpu": "NVIDIA", "build": "main", "date": "2026-10-22",
+         "url": "https://github.com/boykopovar/AnyPS5/discussions/2690#discussioncomment-19124272", "note": "plain main 3ca07d086, no local patches, GTX 1060 6 GB: title screen, the Terms of Service dialog closes, Cross input, save load and gameplay in Resort Plaza with rendering and audio; #7966 fixed the first stop on main"}
+      ]
+    }
+  ],
+  "title_tags_note": "What kind of game a title is, from a fixed list (2026-10-13). A tag needs a source that names it: the Wikidata genre of the item whose name and platform (PS5) match, the PlayStation Store genre of this title ID, the SteamSpy user tags of that item's Steam app (2D, 3D, Shooter, Platformer only), or the homebrew's own README. No source, no tag. See AGENTS.md.",
+  "title_tags": [
+    {"title": "PPSA01153", "name": "OliSe Player", "tags": ["App"], "sources": ["https://github.com/Marice/OliSePlayer"]},
+    {"title": "PPSA01285", "name": "Returnal", "tags": ["Shooter"], "sources": ["https://www.wikidata.org/wiki/Q96240947", "https://store.playstation.com/en-us/concept/10000176", "https://steamspy.com/app/1649240"]},
+    {"title": "PPSA01289", "name": "Sackboy: A Big Adventure", "tags": ["3D", "Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q96215907", "https://store.playstation.com/en-us/product/UP9000-PPSA01289_00-SACKBOYADVENTURE", "https://steamspy.com/app/1599660"]},
+    {"title": "PPSA01325", "name": "Astro's Playroom", "tags": ["Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q96240949", "https://store.playstation.com/en-us/product/IP9100-PPSA01325_00-PREINMASTER00000"]},
+    {"title": "PPSA01341", "name": "Demon's Souls", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q96227146", "https://store.playstation.com/en-gb/product/EP9000-PPSA01341_00-DEMONSSOULS00000"]},
+    {"title": "PPSA01342", "name": "Demon's Souls", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q96227146", "https://store.playstation.com/en-us/product/UP9000-PPSA01342_00-DEMONSSOULS00000"]},
+    {"title": "PPSA01474", "name": "Ratchet & Clank: Rift Apart", "tags": ["3D", "Shooter", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96217480", "https://store.playstation.com/en-gb/product/EP9000-PPSA01474_00-RATCHETCLANKRIFT", "https://steamspy.com/app/1895880"]},
+    {"title": "PPSA01500", "name": "Watch Dogs: Legion", "tags": ["Shooter", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q64534648", "https://store.playstation.com/en-us/concept/232581", "https://steamspy.com/app/2239550"]},
+    {"title": "PPSA01521", "name": "Horizon Forbidden West", "tags": ["RPG", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96216443", "https://store.playstation.com/en-gb/product/EP9000-PPSA01521_00-FORBIDDENWESTPS5"]},
+    {"title": "PPSA01530", "name": "Puyo Puyo Tetris 2", "tags": ["Puzzle"], "sources": ["https://www.wikidata.org/wiki/Q98708492"]},
+    {"title": "PPSA01599", "name": "RIDE 4", "tags": ["Racing"], "sources": ["https://www.wikidata.org/wiki/Q99655327", "https://store.playstation.com/en-gb/product/EP4356-PPSA01599_00-RIDE4FULLGAME000"]},
+    {"title": "PPSA01670", "name": "Deathloop", "tags": ["Shooter", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96240037", "https://store.playstation.com/en-gb/product/EP1003-PPSA01670_00-DEATHLOOP0000000", "https://steamspy.com/app/1252330"]},
+    {"title": "PPSA01736", "name": "Planet Coaster", "tags": ["Simulation"], "sources": ["https://www.wikidata.org/wiki/Q19744696"]},
+    {"title": "PPSA01746", "name": "Kena: Bridge of Spirits", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96242717", "https://store.playstation.com/en-us/concept/10001235", "https://steamspy.com/app/1954200"]},
+    {"title": "PPSA01748", "name": "Marvel's Guardians of the Galaxy", "tags": ["Shooter", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q107214964", "https://store.playstation.com/en-us/product/UP0082-PPSA01748_00-DXM0000000000001", "https://steamspy.com/app/1088850"]},
+    {"title": "PPSA01802", "name": "Kena: Bridge of Spirits", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96242717", "https://store.playstation.com/en-us/concept/10001235", "https://steamspy.com/app/1954200"]},
+    {"title": "PPSA01825", "name": "Pathless", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q63994801", "https://store.playstation.com/en-us/product/UP2470-PPSA01825_00-PATHLESSSIEA0000", "https://steamspy.com/app/1492680"]},
+    {"title": "PPSA02015", "name": "DS2", "tags": ["Action"], "sources": ["https://www.wikidata.org/wiki/Q115641709"]},
+    {"title": "PPSA02100", "name": "Stray", "tags": ["Puzzle", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96247255", "https://store.playstation.com/en-us/product/UP2470-PPSA02100_00-STRAYSIEA0000000"]},
+    {"title": "PPSA02101", "name": "Stray", "tags": ["Puzzle", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96247255", "https://store.playstation.com/en-gb/product/EP2333-PPSA02101_00-STRAYSIEE0000000"]},
+    {"title": "PPSA02158", "name": "Astro Bot", "tags": ["Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q126199700", "https://store.playstation.com/en-us/concept/10002684"]},
+    {"title": "PPSA02262", "name": "Dying Light 2", "tags": ["Horror", "RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q55004330"]},
+    {"title": "PPSA02530", "name": "PRAGMATA", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96240015", "https://store.playstation.com/en-us/product/UP0102-PPSA02530_00-PRAGMATA00000000"]},
+    {"title": "PPSA02801", "name": "New Joe & Mac Caveman Ninja", "tags": ["Action"], "sources": ["https://store.playstation.com/en-gb/product/EP4295-PPSA02801_00-JOEANDMACPS500EU"]},
+    {"title": "PPSA02929", "name": "Dreaming Sarah", "tags": ["2D", "Platformer", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q120751003", "https://store.playstation.com/en-us/product/UP0891-PPSA02929_00-RAGDREAMINGSARAH", "https://steamspy.com/app/296870"]},
+    {"title": "PPSA03001", "name": "Sifu", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108650420", "https://store.playstation.com/en-us/concept/10001973"]},
+    {"title": "PPSA03030", "name": "One Night Stand", "tags": ["RPG", "Adventure"], "sources": ["https://store.playstation.com/en-us/product/UP0891-PPSA03030_00-RGAONENIGHTSTAND"]},
+    {"title": "PPSA03306", "name": "Silt", "tags": ["2D", "Platformer", "Puzzle", "Horror", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q111729668", "https://store.playstation.com/en-gb/product/EP2520-PPSA03306_00-SIEESILTFULLGAME", "https://steamspy.com/app/1325890"]},
+    {"title": "PPSA03355", "name": "Hades", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q59756366", "https://store.playstation.com/en-us/product/UP2125-PPSA03355_00-3466019145463410"]},
+    {"title": "PPSA03396", "name": "Last of Us Part I", "tags": ["Shooter", "Horror", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q113377532", "https://store.playstation.com/en-us/product/UP9000-PPSA03396_00-THELASTOFUSPART1", "https://steamspy.com/app/1888930"]},
+    {"title": "PPSA03541", "name": "EA Sports UFC 5", "tags": ["Fighting"], "sources": ["https://www.wikidata.org/wiki/Q123219770", "https://store.playstation.com/en-us/concept/10002788"]},
+    {"title": "PPSA03671", "name": "Marvel's Wolverine", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108479474", "https://store.playstation.com/en-us/product/UP9000-PPSA03671_00-MARVELSWOLVERINE"]},
+    {"title": "PPSA03706", "name": "My Friend Peppa Pig", "tags": ["2D", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q109061849", "https://steamspy.com/app/1635590"]},
+    {"title": "PPSA03747", "name": "Skyrim", "tags": ["RPG", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q323862"]},
+    {"title": "PPSA03748", "name": "Kerbal Space Program", "tags": ["Simulation"], "sources": ["https://www.wikidata.org/wiki/Q1471545"]},
+    {"title": "PPSA04029", "name": "Cyberpunk 2077", "tags": ["Shooter", "RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q3182559", "https://steamspy.com/app/1091500"]},
+    {"title": "PPSA04159", "name": "Goat Simulator 3", "tags": ["3D", "Simulation", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q112435648", "https://store.playstation.com/en-us/product/UP4664-PPSA04159_00-GS3MAINGAMEPACK0", "https://steamspy.com/app/850190"]},
+    {"title": "PPSA04263", "name": "Grand Theft Auto V", "tags": ["Shooter", "Simulation", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q17452", "https://steamspy.com/app/271590"]},
+    {"title": "PPSA04264", "name": "GTA V", "tags": ["Shooter", "Simulation", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q17452", "https://steamspy.com/app/271590"]},
+    {"title": "PPSA04540", "name": "Rise of the Ronin", "tags": ["3D", "RPG", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q113961028", "https://store.playstation.com/en-gb/product/EP9000-PPSA04540_00-RONINFULLGAME001", "https://steamspy.com/app/1340990"]},
+    {"title": "PPSA04610", "name": "Elden Ring", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q64826862", "https://store.playstation.com/en-us/product/UP0700-PPSA04610_00-ELDENRING0000000"]},
+    {"title": "PPSA05110", "name": "Persona 5 Royal", "tags": ["RPG"], "sources": ["https://www.wikidata.org/wiki/Q63385672", "https://store.playstation.com/en-gb/product/EP0177-PPSA05110_00-P5RGAME000000000"]},
+    {"title": "PPSA05324", "name": "Sonic Origins", "tags": ["2D", "Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q111667582", "https://store.playstation.com/en-us/product/UP0177-PPSA05324_00-SONICORIGINS0000", "https://steamspy.com/app/1794960"]},
+    {"title": "PPSA05510", "name": "Minecraft Legends", "tags": ["Strategy", "Action"], "sources": ["https://www.wikidata.org/wiki/Q112430705", "https://store.playstation.com/en-gb/product/EP4433-PPSA05510_00-1296939562310362"]},
+    {"title": "PPSA05684", "name": "Uncharted: Legacy of Thieves Collection", "tags": ["Shooter", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108482649", "https://store.playstation.com/en-gb/product/EP9000-PPSA05684_00-UNCHARTED4R00000", "https://steamspy.com/app/1659420"]},
+    {"title": "PPSA06320", "name": "Ape Escape", "tags": ["Action", "Adventure"], "sources": ["https://store.playstation.com/en-gb/product/EP9000-PPSA06320_00-SCES01564P000000"]},
+    {"title": "PPSA06464", "name": "Cult of the Lamb", "tags": ["2D", "Simulation", "Strategy", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108273566", "https://store.playstation.com/en-us/concept/10004484", "https://steamspy.com/app/1313140"]},
+    {"title": "PPSA06465", "name": "Cult of the Lamb", "tags": ["2D", "Simulation", "Strategy", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108273566", "https://store.playstation.com/en-us/concept/10004484", "https://steamspy.com/app/1313140"]},
+    {"title": "PPSA07117", "name": "Unpacking", "tags": ["Puzzle", "Simulation"], "sources": ["https://store.playstation.com/en-us/product/UP3864-PPSA07117_00-UNPACKINGPS5000A"]},
+    {"title": "PPSA07286", "name": "Road of Death", "tags": ["Action"], "sources": ["https://store.playstation.com/en-gb/product/EP0896-PPSA07286_00-RATGAROADOFDEATH"]},
+    {"title": "PPSA07411", "name": "Resident Evil 4", "tags": ["Shooter", "Horror", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q112231148", "https://store.playstation.com/en-us/product/UP0102-PPSA07411_00-RE4RMAINGAME0000", "https://steamspy.com/app/2050650"]},
+    {"title": "PPSA08427", "name": "Killing Floor 3", "tags": ["Shooter", "Horror"], "sources": ["https://www.wikidata.org/wiki/Q121766481", "https://store.playstation.com/en-gb/product/EP0114-PPSA08427_00-KF3GAME000000001"]},
+    {"title": "PPSA08560", "name": "Split Fiction", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q131433899", "https://steamspy.com/app/2001120"]},
+    {"title": "PPSA08709", "name": "Silent Hill 2", "tags": ["Horror"], "sources": ["https://www.wikidata.org/wiki/Q114770599", "https://store.playstation.com/en-gb/product/EP0101-PPSA08709_00-MAINGAME00000000"]},
+    {"title": "PPSA08755", "name": "Pinball FX", "tags": ["Simulation"], "sources": ["https://store.playstation.com/en-us/product/UP4042-PPSA08755_00-PINBALLFXPS50000"]},
+    {"title": "PPSA09076", "name": "DREDGE", "tags": ["Horror", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q113647971", "https://store.playstation.com/en-gb/product/EP4064-PPSA09076_00-0619528414081649"]},
+    {"title": "PPSA09477", "name": "Quake II PS5", "tags": ["Shooter"], "sources": ["https://store.playstation.com/en-us/product/UP1003-PPSA09477_00-QUAKE20000000000"]},
+    {"title": "PPSA09682", "name": "Hotline Miami", "tags": ["Action"], "sources": ["https://www.wikidata.org/wiki/Q3389836"]},
+    {"title": "PPSA09706", "name": "Persona 5 Tactica", "tags": ["RPG", "Strategy"], "sources": ["https://www.wikidata.org/wiki/Q119295153", "https://store.playstation.com/en-us/concept/10005896"]},
+    {"title": "PPSA10112", "name": "Silent Hill: The Short Message", "tags": ["Horror"], "sources": ["https://www.wikidata.org/wiki/Q124395892", "https://store.playstation.com/en-hk/product/HP0101-PPSA10112_00-4195537828739002"]},
+    {"title": "PPSA10261", "name": "Lies of P", "tags": ["3D", "RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q109820884", "https://store.playstation.com/en-us/product/UP1685-PPSA10261_00-4396566144501976", "https://steamspy.com/app/1627720"]},
+    {"title": "PPSA10600", "name": "Ad Infinitum", "tags": ["Horror"], "sources": ["https://store.playstation.com/en-gb/product/EP6665-PPSA10600_00-AIF0000000000000"]},
+    {"title": "PPSA10698", "name": "FPV Simulator", "tags": ["Racing", "Simulation"], "sources": ["https://store.playstation.com/en-gb/product/EP7541-PPSA10698_00-2284115577212324"]},
+    {"title": "PPSA11142", "name": "Killzone: Liberation", "tags": ["Shooter", "Action"], "sources": ["https://www.wikidata.org/wiki/Q281392", "https://store.playstation.com/en-gb/product/EP9000-PPSA11142_00-UCES002790000000"]},
+    {"title": "PPSA11386", "name": "007 First Light", "tags": ["Action", "Adventure"], "sources": ["https://store.playstation.com/en-gb/product/EP3969-PPSA11386_00-007FIRSTLIGHT000"]},
+    {"title": "PPSA12338", "name": "Cult of the Lamb", "tags": ["2D", "Simulation", "Strategy", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q108273566", "https://store.playstation.com/en-us/concept/10004484", "https://steamspy.com/app/1313140"]},
+    {"title": "PPSA12544", "name": "Hollow Knight: Silksong", "tags": ["2D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q63294487", "https://store.playstation.com/en-gb/product/EP1805-PPSA12544_00-HKSILKSONGPS5000"]},
+    {"title": "PPSA13356", "name": "Raiden III x MIKADO MANIAX", "tags": ["Shooter", "Action"], "sources": ["https://store.playstation.com/en-us/product/UP1063-PPSA13356_00-RAIDENXMIKADOPS5"]},
+    {"title": "PPSA13579", "name": "Blasphemous 2", "tags": ["2D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q118213344", "https://store.playstation.com/en-gb/product/EP4064-PPSA13579_00-BLASPHEMOUS20000", "https://steamspy.com/app/2114740"]},
+    {"title": "PPSA13580", "name": "Blasphemous II", "tags": ["2D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q118213344", "https://steamspy.com/app/2114740"]},
+    {"title": "PPSA13934", "name": "Spirit of the Island", "tags": ["Simulation", "Adventure"], "sources": ["https://store.playstation.com/en-gb/product/EP1302-PPSA13934_00-0584770477306422"]},
+    {"title": "PPSA14632", "name": "LEGO Horizon Adventures", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q126390319", "https://store.playstation.com/en-us/concept/10007722", "https://steamspy.com/app/2428810"]},
+    {"title": "PPSA15065", "name": "Cat Quest III", "tags": ["RPG", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q118650584", "https://store.playstation.com/en-us/product/UP7581-PPSA15065_00-CQ300000000PS5US"]},
+    {"title": "PPSA15246", "name": "Teardown", "tags": ["Simulation", "Strategy", "Action"], "sources": ["https://store.playstation.com/en-us/product/UP6856-PPSA15246_00-TRDNBASE00000000"]},
+    {"title": "PPSA15421", "name": "Until Dawn", "tags": ["Horror", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q124395933", "https://store.playstation.com/en-gb/product/EP9000-PPSA15421_00-FULLGAME00000001"]},
+    {"title": "PPSA15508", "name": "Last of Us Part II Remastered", "tags": ["Shooter", "Horror", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q123473426", "https://store.playstation.com/en-gb/product/EP9000-PPSA15508_00-THELASTOFUSPART2", "https://steamspy.com/app/2531310"]},
+    {"title": "PPSA15645", "name": "Castlevania Dominus Collection", "tags": ["2D", "Platformer", "RPG", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q129939088", "https://store.playstation.com/ja-jp/product/JP0101-PPSA15645_00-DOMINUSCOLLECTIO", "https://steamspy.com/app/2369900"]},
+    {"title": "PPSA15657", "name": "Disney Epic Mickey: Rebrushed", "tags": ["3D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q124650081", "https://store.playstation.com/en-gb/product/EP4389-PPSA15657_00-EPICMICKEYREMAKE", "https://steamspy.com/app/1522160"]},
+    {"title": "PPSA15878", "name": "Propagation: Paradise Hotel", "tags": ["Horror"], "sources": ["https://store.playstation.com/en-gb/product/EP7134-PPSA15878_00-0791373335556683"]},
+    {"title": "PPSA16064", "name": "Minecraft Dungeons II", "tags": ["RPG", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q138753472"]},
+    {"title": "PPSA16827", "name": "Harmony's Odyssey", "tags": ["Puzzle"], "sources": ["https://store.playstation.com/en-hk/product/HP7621-PPSA16827_00-HARMONYPS5ASIA00"]},
+    {"title": "PPSA16951", "name": "Tales of Xillia Remastered", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q135908160", "https://store.playstation.com/en-hk/product/HP0700-PPSA16951_00-MAINGAME00000000"]},
+    {"title": "PPSA17221", "name": "Minecraft", "tags": ["Simulation", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q49740", "https://store.playstation.com/en-us/product/UP4433-PPSA17221_00-MINECRAFTPS50000"]},
+    {"title": "PPSA17641", "name": "SymphonyStation5", "tags": ["App"], "sources": ["https://github.com/TsvetomirGT/SymphonyStation5"]},
+    {"title": "PPSA19450", "name": "Planet of Lana", "tags": ["2D", "Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q110029355", "https://store.playstation.com/en-gb/product/EP5360-PPSA19450_00-PLANETOFLANA05EU", "https://steamspy.com/app/1608230"]},
+    {"title": "PPSA19943", "name": "Big Helmet Heroes", "tags": ["3D", "Action"], "sources": ["https://store.playstation.com/en-us/product/UB0045-PPSA19943_00-BIGHELMETPS50000", "https://steamspy.com/app/2397250"]},
+    {"title": "PPSA21402", "name": "Balatro", "tags": ["2D", "Strategy"], "sources": ["https://store.playstation.com/en-gb/product/EP3495-PPSA21402_00-0421077938281357", "https://steamspy.com/app/2379780"]},
+    {"title": "PPSA21564", "name": "Astro Bot", "tags": ["Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q126199700", "https://store.playstation.com/en-us/product/UP9000-PPSA21564_00-0000000000000000"]},
+    {"title": "PPSA21567", "name": "Astro Bot", "tags": ["Platformer", "Action"], "sources": ["https://www.wikidata.org/wiki/Q126199700", "https://store.playstation.com/en-gb/product/EP9000-PPSA21567_00-0000000000000000"]},
+    {"title": "PPSA21607", "name": "Smurfs Dreams", "tags": ["3D", "Platformer", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q125693269", "https://steamspy.com/app/2602020"]},
+    {"title": "PPSA21703", "name": "Vampire Survivors", "tags": ["2D", "RPG"], "sources": ["https://www.wikidata.org/wiki/Q110726215", "https://steamspy.com/app/1794680"]},
+    {"title": "PPSA22520", "name": "Animal Well", "tags": ["2D", "Platformer", "Puzzle", "Horror", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q116149653", "https://store.playstation.com/ja-jp/product/JP8399-PPSA22520_00-0036675864053061", "https://steamspy.com/app/813230"]},
+    {"title": "PPSA22623", "name": "Zombie Cure Lab", "tags": ["Strategy", "Action"], "sources": ["https://store.playstation.com/en-gb/product/EP2865-PPSA22623_00-0940801774671994"]},
+    {"title": "PPSA23126", "name": "Palworld", "tags": ["Shooter", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q113989188", "https://store.playstation.com/en-us/concept/10011027", "https://steamspy.com/app/1623730"]},
+    {"title": "PPSA23827", "name": "Cloudberry Kingdom", "tags": ["Puzzle"], "sources": ["https://store.playstation.com/en-us/product/UB0755-PPSA23827_00-0069717173686447"]},
+    {"title": "PPSA24423", "name": "Slay the Princess", "tags": ["Horror", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q117472689"]},
+    {"title": "PPSA25344", "name": "Sword of the Sea", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q118645491", "https://store.playstation.com/en-gb/product/EP0292-PPSA25344_00-0946238103518617"]},
+    {"title": "PPSA25380", "name": "Elden Ring Nightreign", "tags": ["3D", "RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q131435228", "https://store.playstation.com/en-us/product/UP0700-PPSA25380_00-ERSL000000000000", "https://steamspy.com/app/2622380"]},
+    {"title": "PPSA25573", "name": "Palworld", "tags": ["Shooter", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q113989188", "https://store.playstation.com/en-us/concept/10011027", "https://steamspy.com/app/1623730"]},
+    {"title": "PPSA26344", "name": "Ghost of Yōtei", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q130360297"]},
+    {"title": "PPSA26358", "name": "Lost Soul Aside", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q56554018", "https://store.playstation.com/en-hk/product/HP9000-PPSA26358_00-LOSTSOULASIDE000"]},
+    {"title": "PPSA28416", "name": "STAR WARS: Galactic Racer", "tags": ["Racing"], "sources": ["https://www.wikidata.org/wiki/Q137363888", "https://store.playstation.com/en-us/product/UP8737-PPSA28416_00-SWGALACTICRACER1"]},
+    {"title": "PPSA28502", "name": "Pure Pool Pro", "tags": ["Sports", "Simulation"], "sources": ["https://www.wikidata.org/wiki/Q135073853", "https://store.playstation.com/en-gb/product/EP4337-PPSA28502_00-PUREPOOLPROGAME0"]},
+    {"title": "PPSA28997", "name": "God of War: Sons of Sparta", "tags": ["Platformer", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q138241917", "https://store.playstation.com/en-us/product/UP9000-PPSA28997_00-SONSOFSPARTAPS50"]},
+    {"title": "PPSA29343", "name": "Beast of Reincarnation", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q134739750", "https://store.playstation.com/en-us/product/UB1599-PPSA29343_00-AIBOUSIEA0000000"]},
+    {"title": "PPSA29413", "name": "Wobbly Life", "tags": ["Simulation", "Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q122822745", "https://store.playstation.com/en-us/concept/10004896"]},
+    {"title": "PPSA30279", "name": "Taxi Chaos 2", "tags": ["Racing"], "sources": ["https://store.playstation.com/en-us/product/EB1843-PPSA30279_00-000000TAXICHAOS2"]},
+    {"title": "PPSA30601", "name": "Resonance: A Plague Tale Legacy", "tags": ["Action", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q134739548", "https://store.playstation.com/en-gb/product/EP4133-PPSA30601_00-RESONANCEAPLAGUE"]},
+    {"title": "PPSA33016", "name": "Rayman: 30th Anniversary Edition", "tags": ["Action"], "sources": ["https://store.playstation.com/en-gb/product/EP0001-PPSA33016_00-RAYMANNIVERSARY0"]},
+    {"title": "PPSA33286", "name": "Silent Hill: Townfall", "tags": ["Horror"], "sources": ["https://www.wikidata.org/wiki/Q114771189", "https://store.playstation.com/ja-jp/product/JP0101-PPSA33286_00-TOWNFALLSIEJ0000"]},
+    {"title": "PPSA34501", "name": "Call of Duty: Black Ops", "tags": ["Shooter"], "sources": ["https://www.wikidata.org/wiki/Q207986", "https://store.playstation.com/en-us/product/UP0002-PPSA34501_00-CODBO1GAME000001", "https://steamspy.com/app/42700"]},
+    {"title": "PPSA34547", "name": "Control Resonant", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q116947317", "https://store.playstation.com/en-gb/product/EP5291-PPSA34547_00-0210080241603648"]},
+    {"title": "PPSA35169", "name": "Trails in the Sky 2nd Chapter", "tags": ["RPG", "Action"], "sources": ["https://www.wikidata.org/wiki/Q136780003", "https://store.playstation.com/en-us/product/UP8299-PPSA35169_00-TRAILSINTHESKY02"]},
+    {"title": "PPSA36082", "name": "Hades II", "tags": ["Action"], "sources": ["https://store.playstation.com/en-gb/product/EP4484-PPSA36082_00-0912328937643383"]},
+    {"title": "PPSA39410", "name": "VITA5", "tags": ["App"], "sources": ["https://github.com/StonedModder/VITA5"]},
+    {"title": "PPSA68091", "name": "Ruffle Flash", "tags": ["App"], "sources": ["https://github.com/ZiZc3/Ruffle-Flash-PS5"]},
+    {"title": "PPSA69420", "name": "ScreenTester5", "tags": ["App"], "sources": ["https://github.com/Marice/ScreenTester5"]},
+    {"title": "PPSA74126", "name": "Stremio Plus", "tags": ["App"], "sources": ["https://github.com/LoZazaMastro/Stremio-Plus"]},
+    {"title": "PPSA76677", "name": "RommPS", "tags": ["App"], "sources": ["https://github.com/s0liton/RommPS"]},
+    {"title": "PPSA85300", "name": "VLC", "tags": ["App"], "sources": ["https://github.com/ZiZc3/VLC"]},
+    {"title": "PPSA92280", "name": "Capy Mobile", "tags": ["App"], "sources": ["https://github.com/khalifa007/CapyMobile"]},
+    {"title": "PPSA97358", "name": "XPSemu", "tags": ["App"], "sources": ["https://github.com/ZiZc3/XPSemu"]},
+    {"title": "PPSA97510", "name": "PSXS5", "tags": ["App"], "sources": ["https://github.com/SynoPiia/PSXS5"]},
+    {"title": "PPSA98510", "name": "SwanStationPS5", "tags": ["App"], "sources": ["https://github.com/darkxex/SwanStationPS5"]},
+    {"title": "PPSA98766", "name": "DriftCheck", "tags": ["App"], "sources": ["https://github.com/felipemelchior/driftcheck5"]},
+    {"title": "PPSA99000", "name": "ProsperoStore", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoStore"]},
+    {"title": "PPSA99001", "name": "ProsperoRadio", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoRadio"]},
+    {"title": "PPSA99002", "name": "ProsperoLight", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoLight"]},
+    {"title": "PPSA99003", "name": "ProsperoTV", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoTV"]},
+    {"title": "PPSA99004", "name": "ProsperoAI", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoAI"]},
+    {"title": "PPSA99005", "name": "ps5-opengl showcase", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ps5-opengl"]},
+    {"title": "PPSA99006", "name": "ProsperoPuzzles", "tags": ["Puzzle"], "sources": ["https://github.com/blackbearreloaded/ProsperoPuzzles"]},
+    {"title": "PPSA99008", "name": "ProsperoEden", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoEden"]},
+    {"title": "PPSA99011", "name": "PS5 FSR4 Showcase", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ps5-fsr4"]},
+    {"title": "PPSA99039", "name": "EVO Player", "tags": ["App"], "sources": ["https://github.com/sainsaji/EVO-PLAYER-PS5"]},
+    {"title": "PPSA99050", "name": "Homebrew UI Lab", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ps5-homebrew-ui"]},
+    {"title": "PPSA99051", "name": "Surround Sound Studio", "tags": ["App"], "sources": ["https://github.com/sainsaji/PS5-Audio-Passthrough-Research"]},
+    {"title": "PPSA99082", "name": "OpenNOW", "tags": ["App"], "sources": ["https://github.com/Portablelle/OpenNOW-PS5"]},
+    {"title": "PPSA99109", "name": "Prospero Explorer", "tags": ["App"], "sources": ["https://github.com/SvenGDK/Prospero-Explorer"]},
+    {"title": "PPSA99110", "name": "Prospero Multi Tools", "tags": ["App"], "sources": ["https://github.com/SvenGDK/Prospero-Multi-Tools"]},
+    {"title": "PPSA99141", "name": "Mortalfin", "tags": ["App"], "sources": ["https://github.com/mortaljinx/mortalfin"]},
+    {"title": "PPSA99169", "name": "RetroArch", "tags": ["App"], "sources": ["https://github.com/mihawk-99/PS5_RetroArch"]},
+    {"title": "PPSA99177", "name": "PS5VR", "tags": ["App"], "sources": ["https://github.com/theghostonline/PS5VR"]},
+    {"title": "PPSA99203", "name": "PS5SX2", "tags": ["App"], "sources": ["https://github.com/Swordpdf/PS5SX2"]},
+    {"title": "PPSA99204", "name": "PS5NES", "tags": ["App"], "sources": ["https://github.com/Yahballon/PS5NESX"]},
+    {"title": "PPSA99206", "name": "PS5N64", "tags": ["App"], "sources": ["https://github.com/Yahballon/PS5N64X"]},
+    {"title": "PPSA99288", "name": "Nuvio Max'd", "tags": ["App"], "sources": ["https://github.com/HandshakeHackin/Nuvio-maxd-releases"]},
+    {"title": "PPSA99305", "name": "Dusklight", "tags": ["Adventure"], "sources": ["https://github.com/griches/PS5_Dusklight"]},
+    {"title": "PPSA99350", "name": "Steam Remote Play", "tags": ["App"], "sources": ["https://github.com/jmelovich/Steam-Link-PS5"]},
+    {"title": "PPSA99360", "name": "PS5CEMU-HAR", "tags": ["App"], "sources": ["https://github.com/premohq/PS5CEMU-HAR"]},
+    {"title": "PPSA99420", "name": "PS5MC", "tags": ["App"], "sources": ["https://github.com/VivaLaVent/PS5MC"]},
+    {"title": "PPSA99505", "name": "Jelly5", "tags": ["App"], "sources": ["https://github.com/02dnot/Jelly5"]},
+    {"title": "PPSA99515", "name": "Emby5", "tags": ["App"], "sources": ["https://github.com/bornaradusin/Emby5"]},
+    {"title": "PPSA99600", "name": "Cloud Play", "tags": ["App"], "sources": ["https://github.com/tertiumndatur/ps5-cloud-play"]},
+    {"title": "PPSA99764", "name": "Porpoise", "tags": ["App"], "sources": ["https://github.com/elripalda/Porpoise-Dolphin-Emulator-for-PS5"]},
+    {"title": "PPSA99773", "name": "PShare", "tags": ["App"], "sources": ["https://github.com/StonedModder/PShare"]},
+    {"title": "PPSA99810", "name": "PSBox Cloud Gaming", "tags": ["App"], "sources": ["https://github.com/RafaelNGP/xbox-cloud-gaming-ps5"]},
+    {"title": "PPSA99920", "name": "Prospero Vibrate", "tags": ["App"], "sources": ["https://github.com/SvenGDK/Prospero-Vibrate"]},
+    {"title": "PPSA99930", "name": "Forwarder Manager", "tags": ["App"], "sources": ["https://github.com/heydemoura/ps5-forwarder-manager"]},
+    {"title": "PPSA99995", "name": "Prospero Win", "tags": ["App"], "sources": ["https://github.com/mpereiraesaa/prospero-win"]},
+    {"title": "PPSA99997", "name": "Nuvio PS5", "tags": ["App"], "sources": ["https://github.com/bilawalriaz/nuvio-ps5-homebrew"]}
+  ]
+}

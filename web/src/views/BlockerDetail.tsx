@@ -1,0 +1,199 @@
+import { blockerReport, type BlockerRow } from "../data/model";
+import { useData } from "../data/load";
+import { fmtDate, fmtWhen, plural } from "../lib/format";
+import type { Location } from "../lib/router";
+import { foreignTitle } from "../lib/text";
+import { Button } from "@/components/ui/button";
+import { ReportButton } from "../components/ReportDialog";
+import { External, ItemLink, StatusPill } from "../components/ui";
+
+export function BlockerDetail({ id, loc }: { id: string; loc: Location }) {
+  const { model, resolvedAt } = useData();
+  const row = model.blocker(id);
+  if (!row) return <Missing id={id} repo={model.repo} days={model.doc.window?.days ?? 60} />;
+  const b = row.blocker;
+  const after = model.afterFix(id);
+  const prs = b.prs.filter((p) => p.link === "fixes" || p.link === "related");
+  const mentions = b.prs.length - prs.length;
+  const fixedOn = resolvedAt.get(id);
+
+  return (
+    <article className="detail">
+      <header className="detail-head">
+        <p className="detail-meta">
+          {row.rank != null && <span className="mono">No. {String(row.rank).padStart(2, "0")}</span>}
+          <span className="mono">{row.ref}</span>
+          <span>{row.area}</span>
+        </p>
+        <h2 id="drawer-title" tabIndex={-1}>
+          {row.title}
+        </h2>
+        <div className="detail-tags">
+          <StatusPill row={row} />
+          {b.origin === "curated" && <span className="tag">Checked by hand</span>}
+          {b.help_wanted && <span className="tag">Help wanted</span>}
+        </div>
+      </header>
+
+      {row.open && (
+        <div className="stats-wrap">
+          <dl className="stats">
+            <Stat n={row.firstStop} label={row.firstStop === 1 ? "Game stops here first" : "Games stop here first"} />
+            <Stat n={row.onlyStop} label={row.onlyStop === 1 ? "Game has no other stop" : "Games have no other stop"} />
+            <Stat n={row.games} label={row.games === 1 ? "Game in total" : "Games in total"} />
+          </dl>
+          {row.rank != null && (
+            <p className="score-line">
+              Score {row.score} = 3 × {row.onlyStop} + 2 × {row.firstStop} + {row.games}
+            </p>
+          )}
+        </div>
+      )}
+      {!row.open && (
+        <p className="detail-note">
+          Fixed
+          {row.fix.pr && (
+            <>
+              {" "}by <External href={row.fix.pr.url} className="mono">{row.fix.pr.ref}</External>
+            </>
+          )}
+          {fixedOn && `, first seen in the snapshot of ${fmtDate(fixedOn)}`}. It no longer stops any game on the map.
+        </p>
+      )}
+
+      {after.length > 0 && (
+        <section className="detail-sec">
+          <h3>After this fix</h3>
+          <ul className="after">
+            {after.map((a) => (
+              <li key={`${a.game.id}-${a.kind}`}>
+                <ItemLink item={{ kind: "game", id: a.game.id }} loc={loc} className="after-game">
+                  {a.game.name}
+                </ItemLink>
+                {a.kind === "done" && <span className="muted">no known stop left</span>}
+                {a.kind !== "done" && (
+                  <span className="after-then">
+                    <span className="muted">{a.kind === "next" ? "then" : "stops earlier at"}</span>{" "}
+                    <BlockerRef row={a.then} loc={loc} named={a.kind === "next"} />
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {b.next && (
+        <section className="detail-sec">
+          <h3>Next step</h3>
+          <p>{b.next}</p>
+        </section>
+      )}
+      {b.help_wanted && (
+        <section className="detail-sec">
+          <h3>Help wanted</h3>
+          <p>{b.help_wanted}</p>
+        </section>
+      )}
+      {b.signature && (
+        <section className="detail-sec">
+          <h3>Error</h3>
+          <pre className="sig">
+            <code>{b.signature}</code>
+          </pre>
+        </section>
+      )}
+      {prs.length > 0 && (
+        <section className="detail-sec">
+          <h3>
+            Pull requests <span className="h-n">{prs.length}</span>
+          </h3>
+          <ul className="prs">
+            {prs.map((p) => (
+              <li key={p.key}>
+                <span className="pr-line">
+                  <External href={p.url} className="mono">{p.ref}</External>
+                  <span className={`tag tag-${p.state}`}>{p.state}</span>
+                  <span className="muted">{p.link === "fixes" ? "fix" : "related"}</span>
+                  {/* When the pull request last moved: an open fix nobody has touched in a
+                      fortnight is a different prospect from one updated this morning. */}
+                  {p.updated && <span className="when">{fmtWhen(p.updated)}</span>}
+                </span>
+                {p.title && <span className="pr-title">{p.title}</span>}
+                {p.note && <span className="pr-note">{p.note}</span>}
+              </li>
+            ))}
+          </ul>
+          {mentions > 0 && <p className="muted small">{plural(mentions, "more PR")} only mention it.</p>}
+        </section>
+      )}
+
+      <footer className="detail-foot">
+        <Button asChild>
+          <External href={b.url}>Open {row.ref} on GitHub</External>
+        </Button>
+        <ReportButton blocker={row.ref.replace("#", "")} github={blockerReport(model, row)} context={row.ref} />
+        {b.last_activity && <span className="muted small">Last activity {fmtWhen(b.last_activity)}</span>}
+      </footer>
+    </article>
+  );
+}
+
+function Stat({ n, label }: { n: number; label: string }) {
+  return (
+    <div className="stat">
+      <dt>{label}</dt>
+      <dd className="stat-n">{n}</dd>
+    </div>
+  );
+}
+
+export function BlockerRef({
+  row,
+  loc,
+  named = true,
+  forIds,
+}: {
+  row: BlockerRow;
+  loc: Location;
+  named?: boolean;
+  forIds?: readonly string[]; // the title IDs of the game being read, so another game's name is not shown as its stop
+}) {
+  const { model } = useData();
+  const foreign = named && forIds ? foreignTitle(row.blocker.title, forIds) : null;
+  const symptom = foreign ? (foreign.rest.length >= 8 ? foreign.rest : row.blocker.signature) : row.title;
+  const raised = foreign ? model.game(foreign.id) : null;
+  return (
+    <ItemLink item={{ kind: "blocker", id: row.id }} loc={loc} className="b-link">
+      <span className="mono">{row.ref}</span>
+      {named && <span className="b-name"> {symptom}</span>}
+      {foreign && (
+        <span className="b-raised muted">
+          {" "}
+          raised for {raised?.named ? raised.name : foreign.id}
+        </span>
+      )}
+    </ItemLink>
+  );
+}
+
+function Missing({ id, repo, days }: { id: string; repo: string; days: number }) {
+  const issue = /^\d+$/.test(id) ? id : null;
+  return (
+    <article className="detail">
+      <header className="detail-head">
+        <h2 id="drawer-title" tabIndex={-1}>
+          {issue ? `#${issue}` : id} is not on the map
+        </h2>
+      </header>
+      <p className="detail-note">This snapshot has no blocker with that ID. It may have been merged into another one or left the {days}-day window.</p>
+      {issue && (
+        <footer className="detail-foot">
+          <External href={`https://github.com/${repo}/issues/${issue}`} className="btn">
+            Open #{issue} on GitHub
+          </External>
+        </footer>
+      )}
+    </article>
+  );
+}

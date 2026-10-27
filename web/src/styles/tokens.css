@@ -1,0 +1,160 @@
+/* The blocker map's design system.
+   Neutrals carry almost everything (ink for emphasis, grays for structure). One accent, blue, means
+   "you can act here": focus rings, the primary button, hovered links. Green means done: a fixed
+   blocker, an implemented function. Geist for text, Geist Mono for IDs, Geist Pixel for the few
+   headline numbers. */
+
+@font-face {
+  font-family: Geist;
+  src: url("../../../site/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../../../site/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Pixel";
+  src: url("../../../site/fonts/GeistPixel-Square.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+
+  /* surfaces */
+  --bg: oklch(0.985 0.002 265);
+  --surface: oklch(1 0 0);
+  --sunken: oklch(0.965 0.003 265);
+  --hover: oklch(0.955 0.004 265);
+  --selected: oklch(0.94 0.006 265);
+  /* lines */
+  --line: oklch(0.915 0.004 265);
+  --line-control: oklch(0.62 0.006 265);
+  --track: oklch(0.88 0.004 265);
+  /* text */
+  --text: oklch(0.2 0.006 265);
+  --text-2: oklch(0.43 0.006 265);
+  --text-3: oklch(0.52 0.006 265);
+  /* the accent: interactive only */
+  --accent: oklch(0.52 0.19 262);
+  --accent-hover: oklch(0.46 0.19 262);
+  --on-accent: oklch(0.99 0 0);
+  /* the keyboard ring: neutral, not the accent, so focusing never looks like a selected control */
+  --focus: color-mix(in oklch, var(--text) 52%, transparent);
+  /* the one place red is used: a form that did not send */
+  --danger: oklch(0.5 0.19 25);
+  /* done */
+  --ok: oklch(0.55 0.14 149);
+  --ok-part: oklch(0.8 0.08 149);
+  --miss: oklch(0.9 0.003 265);
+  --grid: oklch(1 0 0 / 0.7);
+  /* the edge of a picture: pure black or white at low opacity, never a tinted gray */
+  --image-outline: oklch(0 0 0 / 0.1);
+
+  --scrim: oklch(0.2 0.006 265 / 0.32);
+  --shadow-raised: 0 0 0 1px var(--line), 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-control: 0 1px 2px oklch(0 0 0 / 0.05);
+  --shadow-drawer: 0 0 0 1px var(--line), 0 24px 64px oklch(0 0 0 / 0.12), 0 4px 12px oklch(0 0 0 / 0.05);
+
+  /* type */
+  --sans: Geist, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --pixel: "Geist Pixel", "Geist Mono", ui-monospace, monospace;
+  --text-display: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  --text-title: 1.375rem;
+  --text-heading: 1.0625rem;
+  --text-lede: 1.125rem;
+  --text-body: 1rem;
+  --text-ui: 0.9375rem;
+  --text-small: 0.8125rem;
+  --text-micro: 0.75rem;
+  --text-stat: 2.5rem;
+
+  /* space: one step per level of subordination */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  --r-s: 6px;
+  --r-m: 10px;
+  --r-l: 16px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* wide enough to use a 1920 screen: the game list has three columns and a stop line that
+     truncates when the page is narrower than the content it holds */
+  --page: 1440px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --bar-h: 64px;
+  --drawer-w: min(520px, 42vw);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: oklch(0.165 0.004 265);
+    --surface: oklch(0.205 0.005 265);
+    --sunken: oklch(0.19 0.004 265);
+    --hover: oklch(0.235 0.005 265);
+    --selected: oklch(0.26 0.006 265);
+    --line: oklch(0.29 0.005 265);
+    --line-control: oklch(0.55 0.006 265);
+    --track: oklch(0.33 0.005 265);
+    --text: oklch(0.955 0.003 265);
+    --text-2: oklch(0.79 0.004 265);
+    --text-3: oklch(0.69 0.004 265);
+    --accent: oklch(0.74 0.14 262);
+  --danger: oklch(0.72 0.16 25);
+    --accent-hover: oklch(0.8 0.12 262);
+    --on-accent: oklch(0.17 0.02 262);
+    --focus: color-mix(in oklch, var(--text) 58%, transparent);
+    --ok: oklch(0.7 0.15 149);
+    --ok-part: oklch(0.45 0.08 149);
+    --miss: oklch(0.34 0.005 265);
+    --grid: oklch(0.205 0.005 265 / 0.75);
+    --image-outline: oklch(1 0 0 / 0.1);
+    --scrim: oklch(0 0 0 / 0.55);
+    --shadow-raised: 0 0 0 1px var(--line);
+    --shadow-control: none;
+    --shadow-drawer: 0 0 0 1px var(--line), 0 24px 64px oklch(0 0 0 / 0.5);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: oklch(0.165 0.004 265);
+  --surface: oklch(0.205 0.005 265);
+  --sunken: oklch(0.19 0.004 265);
+  --hover: oklch(0.235 0.005 265);
+  --selected: oklch(0.26 0.006 265);
+  --line: oklch(0.29 0.005 265);
+  --line-control: oklch(0.55 0.006 265);
+  --track: oklch(0.33 0.005 265);
+  --text: oklch(0.955 0.003 265);
+  --text-2: oklch(0.79 0.004 265);
+  --text-3: oklch(0.69 0.004 265);
+  --accent: oklch(0.74 0.14 262);
+  --danger: oklch(0.72 0.16 25);
+  --accent-hover: oklch(0.8 0.12 262);
+  --on-accent: oklch(0.17 0.02 262);
+  --focus: color-mix(in oklch, var(--text) 58%, transparent);
+  --ok: oklch(0.7 0.15 149);
+  --ok-part: oklch(0.45 0.08 149);
+  --miss: oklch(0.34 0.005 265);
+  --grid: oklch(0.205 0.005 265 / 0.75);
+  --image-outline: oklch(1 0 0 / 0.1);
+  --scrim: oklch(0 0 0 / 0.55);
+  --shadow-raised: 0 0 0 1px var(--line);
+  --shadow-control: none;
+  --shadow-drawer: 0 0 0 1px var(--line), 0 24px 64px oklch(0 0 0 / 0.5);
+}

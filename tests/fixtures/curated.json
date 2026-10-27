@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "blockers": [
+    {"id": "10", "issue": 10, "title": "Packed pixel ancillary word", "area": "shader",
+     "signature": "ShaderRecompiler::Recompile: shader info collection failed: packed pixel ancillary input has an unsupported live use",
+     "fix_prs": [{"number": 20}], "next": "Land #20."},
+    {"id": "pr-30", "issue": null, "title": "Direct memory stall on Windows", "area": "libkernel",
+     "fix_prs": [{"number": 30}]},
+    {"id": "pr-33", "issue": null, "title": "pthread_set_name_np is not exported", "area": "libkernel",
+     "fix_prs": [{"number": 33, "note": "closed without merge"}]}
+  ],
+  "not_blockers": [],
+  "stage_reviews": [
+    {"title": "PPSA02929", "claim": "Menus", "claim_url": "https://github.com/example/AnyPS5/pull/31",
+     "verdict": "confirmed", "stage": "Menus", "os": "Windows", "gpu": null, "build": "main", "date": "2026-10-08",
+     "url": "https://github.com/example/AnyPS5/pull/31",
+     "quote": "Dreaming Sarah (PPSA02929) reaches its main menu on main with this change.", "reason": "fixture"}
+  ],
+  "titles": [
+    {"id": "PPSA30279", "name": "Taxi Chaos 2", "kind": "retail", "paths": ["Windows/NVIDIA", "Windows/AMD"],
+     "blockers": [{"id": "pr-30"}, {"id": "10", "scope": ["Windows/AMD"]}],
+     "evidence": [{"stage": "Presents", "os": "Windows", "gpu": "NVIDIA", "build": "main", "date": "2026-10-09",
+                   "url": "https://github.com/example/AnyPS5/pull/30", "note": "black frames"}]}
+  ],
+  "title_tags": [
+    {"title": "PPSA02100", "name": "Stray", "tags": ["Puzzle", "Adventure"], "sources": ["https://www.wikidata.org/wiki/Q96247255"]},
+    {"title": "PPSA02929", "name": "Dreaming Sarah", "tags": ["2D", "Platformer", "Adventure"],
+     "sources": ["https://www.wikidata.org/wiki/Q120751003", "https://steamspy.com/app/296870"]},
+    {"title": "PPSA99000", "name": "ProsperoStore", "tags": ["App"], "sources": ["https://github.com/blackbearreloaded/ProsperoStore"]}
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "fetched_at": "2026-10-10T12:00:00Z",
+  "repo": "example/AnyPS5",
+  "cutoff": "2026-08-11T12:00:00Z",
+  "dependencies": {},
+  "external_prs": {},
+  "rate_limit": {},
+  "api": {"graphql_queries": 6, "graphql_cost": 6, "graphql_remaining": 4994, "threads_read": 4, "threads_from_cache": 0, "threads_without_text": 0, "thread_cost": 1},
+  "truncated": [],
+  "issues": [
+    {
+      "number": 40, "state": "OPEN", "stateReason": null,
+      "title": "AGC: storage image access to a depth surface",
+      "body": "```\npresentation failed: compute shader 0x2006410000: AGC graphics: storage image access to depth/stencil surface 0x20183b0000 is not implemented\n```",
+      "url": "https://github.com/example/AnyPS5/issues/40",
+      "createdAt": "2026-10-01T10:00:00Z", "updatedAt": "2026-10-09T10:00:00Z", "closedAt": null,
+      "author": "zoe", "assignees": [], "labels": [], "comment_count": 3,
+      "comments": [
+        {"body": "Ghostrunner (PPSA01999) on main, Windows 11, RTX 4070. The loading screen renders, then:\n\n```\n[Info] Pipeline compiled\nterminate called after throwing an instance of 'std::runtime_error'\n  what():  AGC graphics: storage image access to depth/stencil surface 0x53a500000 is not implemented\n```", "url": "https://github.com/example/AnyPS5/issues/40#issuecomment-401", "createdAt": "2026-10-02T10:00:00Z", "author": "alice"},
+        {"body": "Same on Linux with RADV: PPSA01999 shows its loading screen on current main.", "url": "https://github.com/example/AnyPS5/issues/40#issuecomment-402", "createdAt": "2026-10-03T10:00:00Z", "author": "bob"},
+        {"body": "PPSA01999 reaches the main menu in the nightly smoke run.", "url": "https://github.com/example/AnyPS5/issues/40#issuecomment-403", "createdAt": "2026-10-03T11:00:00Z", "author": "github-actions[bot]"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 41, "state": "OPEN", "stateReason": null,
+      "title": "Ghostrunner (PPSA01999): audio stutters",
+      "body": "The music stutters every few seconds.",
+      "url": "https://github.com/example/AnyPS5/issues/41",
+      "createdAt": "2026-10-04T10:00:00Z", "updatedAt": "2026-10-08T10:00:00Z", "closedAt": null,
+      "author": "carol", "assignees": [], "labels": [], "comment_count": 1,
+      "comments": [
+        {"body": "Gone for me with #50.", "url": "https://github.com/example/AnyPS5/issues/41#issuecomment-411", "createdAt": "2026-10-08T10:00:00Z", "author": "carol"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 60, "state": "OPEN", "stateReason": null,
+      "title": "Single title (PPSA06001): fenced log regression",
+      "body": "A synthetic issue-title association fixture.",
+      "url": "https://github.com/example/AnyPS5/issues/60",
+      "createdAt": "2026-10-05T10:00:00Z", "updatedAt": "2026-10-09T10:00:00Z", "closedAt": null,
+      "author": "maria", "assignees": [], "labels": [], "comment_count": 2,
+      "comments": [
+        {"body": "On main, Windows 11, RTX 4080:\n\n```text\nAGC graphics: comment log stops at the fixture barrier\n```\n\n```text\nAGC graphics: comment log stops at the fixture barrier\n```", "url": "https://github.com/example/AnyPS5/issues/60#issuecomment-601", "createdAt": "2026-10-06T10:00:00Z", "author": "maria"},
+        {"body": "Additional distinct title PPSA06002 is mentioned elsewhere in this issue.", "url": "https://github.com/example/AnyPS5/issues/60#issuecomment-602", "createdAt": "2026-10-06T11:00:00Z", "author": "noah"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 61, "state": "OPEN", "stateReason": null,
+      "title": "Tracker title (PPSA06101): no fallback",
+      "body": "A synthetic tracker guard fixture.",
+      "url": "https://github.com/example/AnyPS5/issues/61",
+      "createdAt": "2026-10-05T10:00:00Z", "updatedAt": "2026-10-09T10:00:00Z", "closedAt": null,
+      "author": "olivia", "assignees": [], "labels": [], "comment_count": 2,
+      "comments": [
+        {"body": "PPSA06102 PPSA06103 PPSA06104 PPSA06105 PPSA06106 PPSA06107", "url": "https://github.com/example/AnyPS5/issues/61#issuecomment-611", "createdAt": "2026-10-06T10:00:00Z", "author": "olivia"},
+        {"body": "On main:\n```\nAGC graphics: tracker comment must not infer a title\n```", "url": "https://github.com/example/AnyPS5/issues/61#issuecomment-612", "createdAt": "2026-10-06T11:00:00Z", "author": "peter"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 62, "state": "OPEN", "stateReason": null,
+      "title": "Two titles PPSA06201 and PPSA06202: no inference",
+      "body": "A synthetic multi-title fixture.",
+      "url": "https://github.com/example/AnyPS5/issues/62",
+      "createdAt": "2026-10-05T10:00:00Z", "updatedAt": "2026-10-09T10:00:00Z", "closedAt": null,
+      "author": "quinn", "assignees": [], "labels": [], "comment_count": 1,
+      "comments": [
+        {"body": "On main:\n```\nAGC graphics: ambiguous issue title must not infer a title\n```", "url": "https://github.com/example/AnyPS5/issues/62#issuecomment-621", "createdAt": "2026-10-06T10:00:00Z", "author": "quinn"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 63, "state": "OPEN", "stateReason": null,
+      "title": "Target title (PPSA06301): explicit comment controls",
+      "body": "A synthetic explicit-ID precedence fixture.",
+      "url": "https://github.com/example/AnyPS5/issues/63",
+      "createdAt": "2026-10-05T10:00:00Z", "updatedAt": "2026-10-09T10:00:00Z", "closedAt": null,
+      "author": "riley", "assignees": [], "labels": [], "comment_count": 1,
+      "comments": [
+        {"body": "PPSA06302 on main:\n```\nAGC graphics: explicit comment title remains authoritative\n```", "url": "https://github.com/example/AnyPS5/issues/63#issuecomment-631", "createdAt": "2026-10-06T10:00:00Z", "author": "riley"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 64, "state": "OPEN", "stateReason": null,
+      "title": "agc: sampled 8_SRGB decode on a device without R8_SRGB — measured filtering order and the fix shape it rules out (Ghost of Yōtei PPSA26344)",
+      "body": "A source-based regression fixture for a nonfatal summary line.",
+      "url": "https://github.com/boykopovar/AnyPS5/issues/3751",
+      "createdAt": "2026-10-12T17:00:00Z", "updatedAt": "2026-10-12T17:26:22Z", "closedAt": null,
+      "author": "fixture", "assignees": [], "labels": [], "comment_count": 1,
+      "comments": [
+        {"body": "**Why the shader is unreachable here.** On the CI device (lavapipe, `LLVM 23.1.1`) it is never compiled.\nThe run logs, in this order:\n\n```text\n2. Shader 0x8000325e00 could not be prepared after registration\n     ShaderRecompiler::Recompile: GetImageResource dword 0 is not a valid runtime value\n     also not fatal; the run continues past it\n3. compute shader 0x8000393600\n     Vulkan dispatch: workgroup count exceeds device limits   <- abort, core dumped (SIGABRT)\n```", "url": "https://github.com/boykopovar/AnyPS5/issues/3751#issuecomment-6129225437", "createdAt": "2026-10-12T17:26:22Z", "author": "Dextroid17"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    },
+    {
+      "number": 65, "state": "OPEN", "stateReason": null,
+      "title": "Onimusha WotS (PPSA27836) hangs on black screen after successful startup",
+      "body": "A source-based regression fixture for a build warning separated from the log lead.",
+      "url": "https://github.com/boykopovar/AnyPS5/issues/6006",
+      "createdAt": "2026-10-14T20:00:00Z", "updatedAt": "2026-10-16T10:36:05Z", "closedAt": null,
+      "author": "fixture", "assignees": [], "labels": [], "comment_count": 1,
+      "comments": [
+        {"body": "**Important: these results are on tag `v0.1.2` (detached HEAD) with local, uncommitted patches, not on current `main`.** I have not re-tested on current `main`.\n\n#### 4. Current blocker: bindless-style image descriptor\n\n```text\nshader 0x211143cc00 stage 5: ShaderRecompiler::Recompile: GetImageResource dword 0 is not a valid runtime value;\n```\n\nEnvironment: Windows 11, RTX 5070 Ti; tag `v0.1.2` with local patches.", "url": "https://github.com/boykopovar/AnyPS5/issues/6006#issuecomment-6179302597", "createdAt": "2026-10-14T21:52:27Z", "author": "amiraction0938"}
+      ],
+      "xrefs": [], "closed_by": [],
+      "issueDependenciesSummary": {"blockedBy": 0, "totalBlockedBy": 0, "blocking": 0, "totalBlocking": 0}
+    }
+  ],
+  "prs": [
+    {
+      "number": 50, "title": "fix(audio): mix ports without set levels",
+      "body": "Mixes object ports even when no level was set.",
+      "url": "https://github.com/example/AnyPS5/pull/50", "state": "OPEN", "merged": false, "mergedAt": null, "closedAt": null,
+      "createdAt": "2026-10-06T09:00:00Z", "updatedAt": "2026-10-09T11:00:00Z", "isDraft": false, "author": "dave",
+      "labels": ["prx"], "closes": [], "comment_count": 1, "review_count": 1, "thread_count": 1, "xref_count": 1,
+      "comments": [
+        {"body": "With this PR, Ghostrunner (PPSA01999) reaches the main menu.", "url": "https://github.com/example/AnyPS5/pull/50#issuecomment-501", "createdAt": "2026-10-07T09:00:00Z", "author": "dave"}
+      ],
+      "reviews": [
+        {"body": "On current main PPSA01999 still stops at the loading screen.", "url": "https://github.com/example/AnyPS5/pull/50#pullrequestreview-502", "createdAt": "2026-10-07T10:00:00Z", "author": "erin", "state": "COMMENTED"}
+      ],
+      "review_comments": [
+        {"body": "PPSA01999 boots fine on my audio branch.", "url": "https://github.com/example/AnyPS5/pull/50#discussion_r503", "createdAt": "2026-10-07T11:00:00Z", "author": "frank", "path": "core/audio/Mixer.cpp"}
+      ],
+      "xrefs": [
+        {"kind": "issue", "repo": "example/AnyPS5", "number": 41, "title": "Ghostrunner (PPSA01999): audio stutters", "url": "https://github.com/example/AnyPS5/issues/41", "state": "OPEN", "merged": null, "draft": null, "updatedAt": "2026-10-08T10:00:00Z", "event": "CrossReferencedEvent", "createdAt": "2026-10-08T10:00:00Z", "willClose": false}
+      ]
+    },
+    {
+      "number": 51, "title": "feat(agc): storage images over depth surfaces",
+      "body": "Implements the missing path.",
+      "url": "https://github.com/example/AnyPS5/pull/51", "state": "MERGED", "merged": true, "mergedAt": "2026-10-09T09:00:00Z", "closedAt": "2026-10-09T09:00:00Z",
+      "createdAt": "2026-10-08T09:00:00Z", "updatedAt": "2026-10-09T09:00:00Z", "isDraft": false, "author": "gus",
+      "labels": ["agc"], "closes": [{"repo": "example/AnyPS5", "number": 40}], "comment_count": 0, "review_count": 0, "thread_count": 0, "xref_count": 0,
+      "comments": [], "reviews": [], "review_comments": [], "xrefs": []
+    },
+    {
+      "number": 52, "title": "feat(libSceSsl): implement sceSslGetCaList",
+      "body": "### What\n\n- Spy Story (PPSA01888) imports `sceSslGetCaList`. On `main` 57f96fd2 its loader stops with `undefined symbol: qOn+wm28wmA`.\n- Windows was last built and tested on the earlier base (fork run [1](https://github.com/someone/AnyPS5/actions/runs/1): Windows 511/511).\n\n### Tested\n\n- Linux (CachyOS), RTX 3080: full ctest passes.",
+      "url": "https://github.com/example/AnyPS5/pull/52", "state": "OPEN", "merged": false, "mergedAt": null, "closedAt": null,
+      "createdAt": "2026-10-08T09:00:00Z", "updatedAt": "2026-10-09T09:00:00Z", "isDraft": false, "author": "hana",
+      "labels": ["prx"], "closes": [], "comment_count": 1, "review_count": 0, "thread_count": 0, "xref_count": 0,
+      "comments": [
+        {"body": "Data from Spy Story (PPSA01888) on Linux. This measures something different from the description (PPSA01777 menu load, warm caches): it covers start-up only.",
+         "url": "https://github.com/example/AnyPS5/pull/52#issuecomment-521", "createdAt": "2026-10-09T09:00:00Z", "author": "hana"}
+      ],
+      "reviews": [], "review_comments": [], "xrefs": []
+    }
+  ]
+}

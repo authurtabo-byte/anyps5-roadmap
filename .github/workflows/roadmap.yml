@@ -1,0 +1,105 @@
+name: Roadmap
+
+# Rebuilds the blocker map from live GitHub data and deploys site/ to GitHub Pages, with the
+# web app from web/ as its front page:
+# hourly (while the repository variable ROADMAP_SCHEDULE is "on"), on every push to
+# main that touches the data or the generator, so merged corrections go live at
+# once, on manual dispatch, and from update-check.yml when upstream changed.
+#
+# The API cache (data/cache) is kept between runs with actions/cache: threads whose
+# updatedAt did not change are not fetched again, and CI builds PR previews from
+# the latest snapshot. Build site has its own time limit, below the job's, so a run
+# that runs out of time still saves the listing and the threads it read (the thread
+# pass writes them as it goes) and the next run carries on from there.
+
+on:
+  schedule:
+    - cron: '41 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - '*.py'
+      - 'anyps5_roadmap/**'
+      - 'site/fonts/**'
+      - 'web/**'
+      - 'AGENTS.md'
+      - '.github/workflows/roadmap.yml'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    if: github.event_name != 'schedule' || vars.ROADMAP_SCHEDULE == 'on'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # Only the AGC driver sources are needed: roadmap.py reads the PM4 handler
+      # table and greps opcode and register names with git show / git grep.
+      - uses: actions/checkout@v7
+        with:
+          repository: boykopovar/AnyPS5
+          path: upstream
+          fetch-depth: 1
+          sparse-checkout: core/libs/prx/libSceAgcDriver
+
+      - name: Tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Restore the API cache
+        id: restore
+        uses: actions/cache/restore@v6
+        with:
+          path: data/cache
+          key: api-snapshot-${{ github.run_id }}
+          restore-keys: api-snapshot-
+
+      - name: Build site
+        timeout-minutes: 27
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api graphql -f query='{ rateLimit { limit remaining resetAt } }' --jq .data.rateLimit
+          python3 roadmap.py --upstream-checkout upstream --ref HEAD --no-git-fetch --out site
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # The front page is the React app in web/, which reads roadmap.json and feed.json at runtime.
+      # It takes the place of the classic page that roadmap.py wrote to index.html (also at classic.html).
+      - name: Build the web app
+        working-directory: web
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          cp -R dist/. ../site/
+
+      - name: Save the API cache
+        if: ${{ !cancelled() && steps.restore.outcome == 'success' }}
+        uses: actions/cache/save@v6
+        with:
+          path: data/cache
+          key: api-snapshot-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
